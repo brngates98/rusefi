@@ -10,50 +10,56 @@
 #include "trigger_universal.h"
 
 /**
- * Audi 5 cylinder trigger
+ * Audi 5 cylinder trigger (also used in some 4, 6, 8 cylinder engines)
  * 
- * Primary wheel (crank): 135 teeth with one reference pin (missing tooth)
- * Secondary wheel (cam): Hall effect sensor providing phase information
+ * Primary wheel (crank): 135 evenly spaced teeth on the starter gear (flywheel)
+ * Secondary wheel (crank): ONE reference pin at 62° BTDC cylinder 1
+ *                          (or 134° BTDC cylinder 5 with firing order 12453)
+ * Cam HALL sensor: One pulse per cam rotation (720°) that masks the secondary signal
+ *                  to provide phase discrimination
  * 
- * This is a VR sensor setup with:
- * - Crank sensor reading 135 teeth
- * - Reference pin (represented as a gap/missing tooth)
- * - Hall effect cam sensor for phase discrimination
+ * The cam-HALL signal masks one of the crankhome pulses, leaving only one pulse
+ * per 720° cycle for proper 4-stroke synchronization.
+ * 
+ * This implementation uses:
+ * - T_PRIMARY: 135 tooth wheel (evenly spaced)
+ * - T_SECONDARY: crankhome reference pin (1 tooth per crank revolution)
+ *                masked by cam-HALL to give 1 pulse per 720°
  */
 void initializeAudi5Cyl(TriggerWaveform *s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
-	// 135 teeth on the crank wheel with one missing tooth (reference)
-	// This gives us 136 positions, with position 135 being the reference gap
+	// 135 evenly spaced teeth around 720° (4-stroke cycle)
 	int totalTeethCount = 135;
-	int skippedCount = 1;
-
-	// Use standard 720 degree engine cycle for 4-stroke
 	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
-	
-	// Tooth width ratio (50% duty cycle typical for VR sensors)
 	float toothWidth = 0.5;
+	
+	// Add 135 evenly spaced teeth on the primary wheel (no missing teeth)
+	// These teeth are on the starter gear/flywheel
+	float toothAngle = engineCycle / totalTeethCount;
+	for (int i = 0; i < totalTeethCount; i++) {
+		float angle = i * toothAngle;
+		s->addEvent720(angle, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
+		s->addEvent720(angle + toothAngle * toothWidth, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
+	}
 
-	// Add the toothed pattern on the primary (crank) wheel
-	// The 135-1 pattern starts at 0 degrees
-	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, skippedCount, 
-		toothWidth, 0, engineCycle, NO_LEFT_FILTER, 690);
-
-	// Add a simple cam sensor pattern on the secondary wheel (Hall effect)
-	// This provides phase information for 4-stroke operation
-	// One pulse per 720 degrees at a specific position
-	s->addEvent720(60, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
-	s->addEvent720(120, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	// Secondary wheel: crankhome reference pin
+	// Located at 62° BTDC cylinder 1 (firing order 12453: 1-2-4-5-3)
+	// With cam-HALL masking, this appears once per 720°
+	// The pin position: 720 - 62 = 658° (before completing the cycle)
+	float crankhomeAngle = 658.0f;
+	s->addEvent720(crankhomeAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent720(crankhomeAngle + 5.0f, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 
 	s->needSecondTriggerInput = true;
-	s->isSecondWheelCam = true;
+	s->isSecondWheelCam = false; // Both signals are from crank, but cam-HALL masks secondary
 
-	// Set synchronization gaps for 135-1 pattern
-	// Gap ratio is approximately (135-1)/1 = 134, but we use a range for tolerance
-	s->setTriggerSynchronizationGap2(2.5, 5.0);
-	s->setSecondTriggerSynchronizationGap(0.5);
+	// The 135 evenly spaced teeth have no gaps, so we rely on the secondary signal
+	// for synchronization
+	s->setTriggerSynchronizationGap(1.0); // No gap in primary
+	s->setSecondTriggerSynchronizationGap(1.0);
 
-	// TDC position - this would need to be calibrated for the actual engine
-	// For now, setting it after the reference gap
-	s->tdcPosition = 60;
+	// TDC position at cylinder 1
+	// Reference pin is 62° BTDC, so TDC is 62° after the pin
+	s->tdcPosition = crankhomeAngle + 62.0f;
 }
