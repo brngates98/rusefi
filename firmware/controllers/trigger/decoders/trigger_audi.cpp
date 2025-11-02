@@ -41,7 +41,14 @@ void initializeAudi5Cyl(TriggerWaveform *s) {
 		// Start first tooth at a small offset to avoid angle=0
 		float angle = toothAngle * (i + (1 - toothWidth));
 		s->addEvent720(angle, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
-		s->addEvent720(angle + toothAngle * toothWidth, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
+		
+		// For the last tooth, avoid ending exactly at engineCycle (720°)
+		float fallAngle = angle + toothAngle * toothWidth;
+		if (i == totalTeethCount - 1 && fallAngle >= engineCycle) {
+			// End slightly before the cycle to avoid normalized angle = 1.0
+			fallAngle = engineCycle - 0.01f;
+		}
+		s->addEvent720(fallAngle, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
 	}
 
 	// Secondary wheel: crankhome reference pin
