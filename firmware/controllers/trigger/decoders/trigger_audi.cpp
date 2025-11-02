@@ -34,30 +34,41 @@ void initializeAudi5Cyl(TriggerWaveform *s) {
 	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
 	float toothWidth = 0.5;
 	
+	// Secondary wheel: crankhome reference pin
+	// Located at 62° BTDC cylinder 1 (firing order 12453: 1-2-4-5-3)
+	// With cam-HALL masking, this appears once per 720°
+	// The pin position: 720 - 62 = 658° (before completing the cycle)
+	float crankhomeAngle = 658.0f;
+	float crankhomeWidth = 5.0f;
+	
 	// Add 135 evenly spaced teeth on the primary wheel (no missing teeth)
 	// These teeth are on the starter gear/flywheel
+	// We need to interleave with the secondary crankhome signal to maintain chronological order
 	float toothAngle = engineCycle / totalTeethCount;
+	bool crankhomeAdded = false;
+	
 	for (int i = 0; i < totalTeethCount; i++) {
 		// Start first tooth at a small offset to avoid angle=0
 		float angle = toothAngle * (i + (1 - toothWidth));
+		float fallAngle = angle + toothAngle * toothWidth;
+		
+		// Add crankhome signal when we reach the appropriate position
+		// Insert it before the tooth that would overlap it
+		if (!crankhomeAdded && angle > crankhomeAngle) {
+			s->addEvent720(crankhomeAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+			s->addEvent720(crankhomeAngle + crankhomeWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+			crankhomeAdded = true;
+		}
+		
 		s->addEvent720(angle, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
 		
 		// For the last tooth, avoid ending exactly at engineCycle (720°)
-		float fallAngle = angle + toothAngle * toothWidth;
 		if (i == totalTeethCount - 1 && fallAngle >= engineCycle) {
 			// End slightly before the cycle to avoid normalized angle = 1.0
 			fallAngle = engineCycle - 0.01f;
 		}
 		s->addEvent720(fallAngle, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
 	}
-
-	// Secondary wheel: crankhome reference pin
-	// Located at 62° BTDC cylinder 1 (firing order 12453: 1-2-4-5-3)
-	// With cam-HALL masking, this appears once per 720°
-	// The pin position: 720 - 62 = 658° (before completing the cycle)
-	float crankhomeAngle = 658.0f;
-	s->addEvent720(crankhomeAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
-	s->addEvent720(crankhomeAngle + 5.0f, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 
 	s->needSecondTriggerInput = true;
 	s->isSecondWheelCam = false; // Both signals are from crank, but cam-HALL masks secondary
