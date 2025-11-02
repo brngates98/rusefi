@@ -1,3 +1,5 @@
 ramdisk_image.h
 *.temp
+README-*.txt
+rusEFI*.url
 
