@@ -38,7 +38,8 @@ void initializeAudi5Cyl(TriggerWaveform *s) {
 	// These teeth are on the starter gear/flywheel
 	float toothAngle = engineCycle / totalTeethCount;
 	for (int i = 0; i < totalTeethCount; i++) {
-		float angle = i * toothAngle;
+		// Start first tooth at a small offset to avoid angle=0
+		float angle = toothAngle * (i + (1 - toothWidth));
 		s->addEvent720(angle, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
 		s->addEvent720(angle + toothAngle * toothWidth, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
 	}
