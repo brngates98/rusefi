@@ -76,6 +76,7 @@ void initializeAudi5Cyl(TriggerWaveform *s) {
 
 	s->needSecondTriggerInput = true;
 	s->isSecondWheelCam = false; // Both signals are from crank, but cam-HALL masks secondary
+	s->isSynchronizationNeeded = false; // Sync is achieved via secondary crankhome signal
 
 	// The 135 evenly spaced teeth have no gaps, so we rely on the secondary signal
 	// for synchronization
