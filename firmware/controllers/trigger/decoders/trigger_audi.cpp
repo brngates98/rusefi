@@ -40,24 +40,29 @@ void initializeAudi5Cyl(TriggerWaveform *s) {
 	// The pin position: 720 - 62 = 658° (before completing the cycle)
 	float crankhomeAngle = 658.0f;
 	float crankhomeWidth = 5.0f;
+	bool crankhomeRiseAdded = false;
+	bool crankhomeFallAdded = false;
 	
 	// Add 135 evenly spaced teeth on the primary wheel (no missing teeth)
 	// These teeth are on the starter gear/flywheel
 	// We need to interleave with the secondary crankhome signal to maintain chronological order
 	float toothAngle = engineCycle / totalTeethCount;
-	bool crankhomeAdded = false;
 	
 	for (int i = 0; i < totalTeethCount; i++) {
 		// Start first tooth at a small offset to avoid angle=0
 		float angle = toothAngle * (i + (1 - toothWidth));
 		float fallAngle = angle + toothAngle * toothWidth;
 		
-		// Add crankhome signal when we reach the appropriate position
-		// Insert it before the tooth that would overlap it
-		if (!crankhomeAdded && angle > crankhomeAngle) {
+		// Add crankhome RISE before this tooth if we've passed it
+		if (!crankhomeRiseAdded && angle > crankhomeAngle) {
 			s->addEvent720(crankhomeAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+			crankhomeRiseAdded = true;
+		}
+		
+		// Add crankhome FALL before this tooth RISE if we've passed it
+		if (crankhomeRiseAdded && !crankhomeFallAdded && angle > (crankhomeAngle + crankhomeWidth)) {
 			s->addEvent720(crankhomeAngle + crankhomeWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
-			crankhomeAdded = true;
+			crankhomeFallAdded = true;
 		}
 		
 		s->addEvent720(angle, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
