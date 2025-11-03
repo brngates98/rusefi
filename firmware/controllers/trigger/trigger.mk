@@ -20,6 +20,7 @@ TRIGGER_DECODERS_SRC_CPP = \
 	$(CONTROLLERS_DIR)/trigger/decoders/trigger_renault.cpp \
 	$(CONTROLLERS_DIR)/trigger/decoders/trigger_renix.cpp \
 	$(CONTROLLERS_DIR)/trigger/decoders/trigger_vw.cpp \
+	$(CONTROLLERS_DIR)/trigger/decoders/trigger_audi.cpp \
 	$(CONTROLLERS_DIR)/trigger/decoders/trigger_mercedes.cpp \
 	$(CONTROLLERS_DIR)/trigger/decoders/trigger_misc.cpp \
 	$(CONTROLLERS_DIR)/trigger/decoders/trigger_universal.cpp
