@@ -67,10 +67,9 @@ void initializeAudi5Cyl(TriggerWaveform *s) {
 		
 		s->addEvent720(angle, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
 		
-		// For the last tooth, avoid ending exactly at engineCycle (720°)
-		if (i == totalTeethCount - 1 && fallAngle >= engineCycle) {
-			// End slightly before the cycle to avoid normalized angle = 1.0
-			fallAngle = engineCycle - 0.01f;
+		// For the last tooth, end exactly at engineCycle (720°) as required
+		if (i == totalTeethCount - 1) {
+			fallAngle = engineCycle;
 		}
 		s->addEvent720(fallAngle, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
 	}
