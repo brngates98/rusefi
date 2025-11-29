@@ -829,6 +829,12 @@ https://wiki.rusefi.com/Trigger-Configuration-Guide\nThis setting flips the sign
 ### invertSecondaryTriggerSignal
 https://wiki.rusefi.com/Trigger-Configuration-Guide\nThis setting flips the signal from the secondary engine speed sensor.
 
+### useAudiTriggerGating
+Enable software gating for Audi 5-cylinder trigger where CAM HALL gates the crank home (G28) signal
+
+### audiCamGateInverted
+Invert the CAM HALL gating logic for Audi 5-cylinder trigger (for sensors with opposite polarity)
+
 ### cutFuelOnHardLimit
 When enabled, this option cuts the fuel supply when the RPM limit is reached. Cutting fuel provides a smoother limiting action; however, it may lead to slightly higher combustion chamber temperatures since unburned fuel is not present to cool the combustion process.
 
@@ -2034,4 +2040,7 @@ Retard timing to remove from actual final timing (after all corrections) due to 
 
 ### dynoCarFrontalAreaM2
 @@DYNO_CAR_FRONTAL_AREA_TOOLTIP@@
+
+### technicalDebt7738
+null
 

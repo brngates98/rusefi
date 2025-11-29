@@ -222,3 +222,48 @@ void configureArcticCat(TriggerWaveform *s) {
 
 
 }
+
+/**
+ * Audi 5 cylinder trigger with 3 physical sensors:
+ * - G4: 135-tooth flywheel (primary) - VR sensor
+ * - G28: Flywheel reference pin at 62° BTDC #1 (secondary) - VR sensor
+ * - CAM HALL: 1 pulse per cam rotation (used for software gating via VVT input)
+ *
+ * The CAM HALL signal acts as a software gate for the crank home (G28) signal:
+ * - When CAM HALL is HIGH: Crank home pulse is PROCESSED
+ * - When CAM HALL is LOW: Crank home pulse is IGNORED
+ *
+ * This produces 1 crank-precise sync pulse per cam rotation (720°) instead of 2.
+ *
+ * Based on VEMS documentation for Audi 5 cylinder engines.
+ */
+void configureAudi5Cyl135_1_1(TriggerWaveform *s) {
+	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+
+	s->isSynchronizationNeeded = true;   // Need sync from crank home (G28)
+	s->needSecondTriggerInput = true;    // We have G28 secondary sensor
+	s->tdcPosition = 62;                 // Crank home is 62° BTDC cylinder #1
+
+	float engineCycle = FOUR_STROKE_ENGINE_CYCLE; // 720°
+	float toothWidth = 0.5;
+	int totalTeethCount = 135;
+
+	// PRIMARY: 135 evenly-spaced teeth from G4 sensor (over 360° crank rotation)
+	// These appear twice per 720° engine cycle
+	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, 0,
+		toothWidth, 0, engineCycle, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+
+	// SECONDARY: Single crank home tooth from G28 at 62° BTDC
+	// The crank home tooth appears twice per 720° cycle (at 62° and 422°)
+	// The CAM HALL gating (implemented in software) will filter to only one pulse per cam rotation
+	float homeToothWidth = 5;  // Approximate width of home tooth in degrees
+	s->addEvent720(62 - homeToothWidth, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent720(62, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	s->addEvent720(422 - homeToothWidth, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent720(422, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+
+	// Gap detection for synchronization
+	// The gap ratio is based on the secondary trigger (crank home tooth)
+	// With software gating, we expect a large gap (360°) between valid sync pulses
+	s->setTriggerSynchronizationGap3(0, 2.0f, 15.0f);
+}
