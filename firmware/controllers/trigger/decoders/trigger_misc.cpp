@@ -224,55 +224,130 @@ void configureArcticCat(TriggerWaveform *s) {
 }
 
 /**
- * Audi 5 cylinder trigger wheel implementation
+ * Audi 5 cylinder trigger with 3 separate sensors:
+ * - Primary: VR 135 crankteeth (evenly-spaced on flywheel, 2.667° per tooth)
+ * - Secondary: VR crank home (single tooth at 62° BTDC cylinder #1)
+ * - CAM: HALL signal (REQUIRED - must be configured via VVT_SINGLE_TOOTH)
  *
- * This trigger follows the Tri-Tach pattern for representing a high tooth count wheel.
- * Due to rusEFI's event limit (280 events), we cannot define all 270 teeth (135×2 per 720°).
+ * IMPORTANT: This trigger REQUIRES the CAM sensor for operation.
+ * It cannot run in wasted spark mode or without the CAM signal.
+ * The CAM signal provides 720° cycle disambiguation for sequential operation.
  *
- * Implementation approach:
- * - Primary channel: First tooth only (sync reference marker)
- * - Secondary channel: All 135 teeth over 720° engine cycle (5.33° spacing)
- * - Sync is achieved via the first tooth appearing on both channels
- * - TDC position: 62° to match expected crank home position
+ * Physical setup:
+ * - 135 teeth per 360° crank rotation = 270 teeth per 720° engine cycle
+ * - Crank home tooth appears twice per 720° (once per crank rotation)
+ * - CAM signal appears once per 720° (once per cam rotation)
  *
- * Physical trigger system (for reference):
- * - VR 135 crankteeth: 135 evenly-spaced teeth on flywheel (2.667° per tooth)
- * - VR crank home: Single tooth at 62° BTDC cylinder #1
- * - CAM HALL: Configured separately via VVT_SINGLE_TOOTH mode
+ * User configuration required:
+ * - Trigger type: TT_AUDI_5CYL_135_1_1
+ * - Primary input: 135-tooth VR sensor
+ * - Secondary input: Crank home VR sensor  
+ * - CAM input[0]: CAM HALL sensor
+ * - VVT Mode[0]: VVT_SINGLE_TOOTH
+ * - Engine Sync Cam: 0
  *
- * Users should verify timing calibration with actual hardware.
+ * Implementation note:
+ * Due to rusEFI's 280-event limit, we define 135 primary teeth over 720°
+ * (5.33° spacing) rather than the physical 270 teeth.
  */
 // TT_AUDI_5CYL_135_1_1
 void configureAudi5cyl135_1_1(TriggerWaveform *s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
-	// No sync needed on evenly-spaced secondary teeth - sync comes from primary/secondary overlap
+	// No gap-based sync needed since primary teeth are evenly spaced
+	// Position reference comes from secondary crank home tooth
+	// Full sequential operation requires CAM signal (configured separately)
 	s->isSynchronizationNeeded = false;
+	s->shapeWithoutTdc = true;
 
-	// TDC position set to match expected crank home location (62° BTDC cylinder #1)
+	// Crank home is at 62° BTDC cylinder #1
 	s->tdcPosition = 62;
 
 	float toothWidth = 0.5;
 	float engineCycle = FOUR_STROKE_ENGINE_CYCLE; // 720°
-
-	// Use 135 teeth over 720° (like Tri-Tach) to stay within event limits
-	// This gives 5.33° spacing instead of the actual 2.67° physical spacing
 	int totalTeethCount = 135;
-	float oneTooth = engineCycle / totalTeethCount;
-	float offset = 0;
+	float oneTooth = engineCycle / totalTeethCount; // ~5.33° per tooth
 
-	// First tooth on both primary and secondary channels (sync reference)
-	float firstToothRise = oneTooth * (1 - toothWidth);
-	float firstToothFall = oneTooth;
-	s->addEventClamped(offset + firstToothRise, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + firstToothRise + 0.1f, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + firstToothFall, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + firstToothFall + 0.1f, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	// Crank home positions (at 62° and 62°+360°=422°)
+	float crankHomeWidth = 5.0f;
+	float crankHome1Rise = 62 - crankHomeWidth; // 57°
+	float crankHome1Fall = 62;                   // 62°
+	float crankHome2Rise = 422 - crankHomeWidth; // 417°
+	float crankHome2Fall = 422;                  // 422°
 
-	// Add remaining teeth on secondary channel
-	// Filter to start after the first tooth that we manually added (skip events before oneTooth)
-	addSkippedToothTriggerEvents(TriggerWheel::T_SECONDARY, s, totalTeethCount, /* skipped */ 0,
-			toothWidth, offset, engineCycle,
-			/* filterLeft */ oneTooth,
-			NO_RIGHT_FILTER);
+	bool crankHome1RiseAdded = false;
+	bool crankHome1FallAdded = false;
+	bool crankHome2RiseAdded = false;
+	bool crankHome2FallAdded = false;
+
+	// Build trigger shape with all events in chronological order
+	// Primary: 135 evenly-spaced teeth
+	// Secondary: Crank home tooth at 62° and 422°
+	for (int i = 0; i < totalTeethCount; i++) {
+		float toothRise = oneTooth * (i + (1 - toothWidth));
+		float toothFall = oneTooth * (i + 1);
+
+		// Last tooth ends exactly at 720°
+		if (i == totalTeethCount - 1) {
+			toothFall = engineCycle;
+		}
+
+		// Insert crank home 1 events if they come before current primary tooth events
+		if (!crankHome1RiseAdded && crankHome1Rise < toothRise) {
+			s->addEvent720(crankHome1Rise, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+			crankHome1RiseAdded = true;
+		}
+		if (!crankHome1FallAdded && crankHome1Fall < toothRise) {
+			s->addEvent720(crankHome1Fall, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+			crankHome1FallAdded = true;
+		}
+
+		// Insert crank home 2 events if they come before current primary tooth events
+		if (!crankHome2RiseAdded && crankHome2Rise < toothRise) {
+			s->addEvent720(crankHome2Rise, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+			crankHome2RiseAdded = true;
+		}
+		if (!crankHome2FallAdded && crankHome2Fall < toothRise) {
+			s->addEvent720(crankHome2Fall, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+			crankHome2FallAdded = true;
+		}
+
+		// Add primary tooth RISE
+		s->addEvent720(toothRise, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
+
+		// Insert crank home events between rise and fall if needed
+		if (!crankHome1RiseAdded && crankHome1Rise < toothFall) {
+			s->addEvent720(crankHome1Rise, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+			crankHome1RiseAdded = true;
+		}
+		if (!crankHome1FallAdded && crankHome1Fall < toothFall) {
+			s->addEvent720(crankHome1Fall, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+			crankHome1FallAdded = true;
+		}
+		if (!crankHome2RiseAdded && crankHome2Rise < toothFall) {
+			s->addEvent720(crankHome2Rise, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+			crankHome2RiseAdded = true;
+		}
+		if (!crankHome2FallAdded && crankHome2Fall < toothFall) {
+			s->addEvent720(crankHome2Fall, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+			crankHome2FallAdded = true;
+		}
+
+		// Add primary tooth FALL
+		s->addEvent720(toothFall, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
+	}
+
+	// Add any remaining crank home events (shouldn't happen with current angles)
+	if (!crankHome1RiseAdded) {
+		s->addEvent720(crankHome1Rise, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	}
+	if (!crankHome1FallAdded) {
+		s->addEvent720(crankHome1Fall, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	}
+	if (!crankHome2RiseAdded) {
+		s->addEvent720(crankHome2Rise, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	}
+	if (!crankHome2FallAdded) {
+		s->addEvent720(crankHome2Fall, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	}
 }
