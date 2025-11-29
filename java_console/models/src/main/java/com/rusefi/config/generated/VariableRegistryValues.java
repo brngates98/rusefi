@@ -1434,7 +1434,7 @@ public class VariableRegistryValues {
 	public static final int SentInput_INPUT6 = 6;
 	public static final int SentInput_INPUT7 = 7;
 	public static final int SentInput_NONE = 0;
-	public static final int SIGNATURE_HASH = 1074561097;
+	public static final int SIGNATURE_HASH = 260507881;
 	public static final String SIMULATOR_TUNE_BIN_FILE_NAME = "generated/simulator_tune_image.bin";
 	public static final String SIMULATOR_TUNE_BIN_FILE_NAME_PREFIX = "generated/simulator_tune_image";
 	public static final String SIMULATOR_TUNE_BIN_FILE_NAME_SUFFIX = ".bin";
@@ -1541,6 +1541,7 @@ public class VariableRegistryValues {
 	public static final int trigger_type_e_TT_60DEG_TOOTH = 77;
 	public static final int trigger_type_e_TT_6_TOOTH_CRANK = 80;
 	public static final int trigger_type_e_TT_ARCTIC_CAT = 85;
+	public static final int trigger_type_e_TT_AUDI_5CYL_135_1_1 = 95;
 	public static final int trigger_type_e_TT_BENELLI_TRE = 21;
 	public static final int trigger_type_e_TT_CHRYSLER_NGC_36_2_2 = 30;
 	public static final int trigger_type_e_TT_CHRYSLER_PHASER = 90;
@@ -1610,7 +1611,7 @@ public class VariableRegistryValues {
 	public static final int trigger_type_e_TT_TOOTHED_WHEEL_60_2 = 8;
 	public static final int trigger_type_e_TT_TOYOTA_3_TOOTH_UZ = 91;
 	public static final int trigger_type_e_TT_TRI_TACH = 53;
-	public static final int trigger_type_e_TT_UNUSED = 95;
+	public static final int trigger_type_e_TT_UNUSED = 96;
 	public static final int trigger_type_e_TT_UNUSED29 = 29;
 	public static final int trigger_type_e_TT_VVT_BARRA_3_PLUS_1 = 56;
 	public static final int trigger_type_e_TT_VVT_BOSCH_QUICK_START = 47;
@@ -1741,7 +1742,7 @@ public class VariableRegistryValues {
 	public static final int TS_RESPONSE_UNRECOGNIZED_COMMAND = 0x83;
 	public static final int TS_SCATTER_OFFSETS_COUNT = 128;
 	public static final char TS_SET_LOGGER_SWITCH = 'l';
-	public static final String TS_SIGNATURE = "rusEFI copilot/implement-audi-5cyl-trigger-system.2025.11.29.f407-discovery.1074561097";
+	public static final String TS_SIGNATURE = "rusEFI copilot/implement-audi-5cyl-trigger-system.2025.11.29.f407-discovery.260507881";
 	public static final char TS_SIMULATE_CAN = '>';
 	public static final char TS_TEST_COMMAND = 't';
 	public static final int TS_TOTAL_OUTPUT_SIZE = 2076;

@@ -25,3 +25,5 @@ void configureBenelli(TriggerWaveform *s);
  */
 void configure60degSingleTooth(TriggerWaveform *s);
 void configureArcticCat(TriggerWaveform *s);
+// TT_AUDI_5CYL_135_1_1
+void configureAudi5cyl135_1_1(TriggerWaveform *s);
