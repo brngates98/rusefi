@@ -14,3 +14,5 @@ void setVwConfiguration(TriggerWaveform *s);
  * I know Skoda was not owned by VAG back than but that's OK
  */
 void setSkodaFavorit(TriggerWaveform *s);
+
+void configureAudi135CamHallWindow(TriggerWaveform *s);

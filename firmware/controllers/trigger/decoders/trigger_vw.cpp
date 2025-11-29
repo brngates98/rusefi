@@ -10,7 +10,7 @@
 #include "trigger_universal.h"
 
 void setSkodaFavorit(TriggerWaveform *s) {
-	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::Rise);
+        s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::Rise);
 
 	s->addEvent360(133, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
 	s->addEvent360(177, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
@@ -22,7 +22,25 @@ void setSkodaFavorit(TriggerWaveform *s) {
 	s->addEvent360(360, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
 
 	s->tdcPosition = 180 + 47;
-	s->setTriggerSynchronizationGap3(/*gapIndex*/0, 2, 4);
+        s->setTriggerSynchronizationGap3(/*gapIndex*/0, 2, 4);
+}
+
+void configureAudi135CamHallWindow(TriggerWaveform *s) {
+        s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+
+        s->shapeWithoutTdc = true;
+
+        // 135 evenly spaced teeth on the flywheel
+        addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, 135, /* skipped */ 0, 0.5, 0,
+                        getEngineCycle(s->getWheelOperationMode()), NO_LEFT_FILTER, NO_RIGHT_FILTER);
+
+        // Cam hall window masks the earlier reference pulse, leaving a single sync at 134 BTDC on cylinder 5
+        constexpr angle_t camWindowSync = 432 - 134;
+        constexpr angle_t camWindowWidth = 5;
+
+        s->isSecondWheelCam = true;
+        s->addEvent720(camWindowSync, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+        s->addEvent720(camWindowSync + camWindowWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 }
 
 void setVwConfiguration(TriggerWaveform *s) {

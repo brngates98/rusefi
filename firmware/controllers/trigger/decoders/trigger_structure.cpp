@@ -825,18 +825,22 @@ void TriggerWaveform::initializeTriggerWaveform(operation_mode_e triggerOperatio
 		initializeSubaru_SVX(this);
 		break;
 
-	case trigger_type_e::TT_JEEPRENIX_66_2_2_2:
-		initializeJeepRenix66_2_2(this);
-		break;
+        case trigger_type_e::TT_JEEPRENIX_66_2_2_2:
+                initializeJeepRenix66_2_2(this);
+                break;
 
-	case trigger_type_e::TT_SUBARU_7_6_CRANK:
-		initializeSubaru7_6_crankOnly(this);
-		break;
+        case trigger_type_e::TT_SUBARU_7_6_CRANK:
+                initializeSubaru7_6_crankOnly(this);
+                break;
+
+        case trigger_type_e::TT_AUDI_135_CAM_HALL:
+                configureAudi135CamHallWindow(this);
+                break;
 
 
-	default:
-	  customTrigger(triggerOperationMode, this, triggerType.type);
-	}
+        default:
+          customTrigger(triggerOperationMode, this, triggerType.type);
+        }
 
 	if (isCrankWheel && !needSecondTriggerInput &&
 #if EFI_UNIT_TEST
