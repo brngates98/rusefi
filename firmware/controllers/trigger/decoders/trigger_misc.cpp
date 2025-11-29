@@ -224,28 +224,32 @@ void configureArcticCat(TriggerWaveform *s) {
 }
 
 /**
- * Audi 5 cylinder trigger with 135-tooth crank wheel + 1 crank home tooth
- * Based on VEMS documentation:
- * - Primary input: 135 teeth on flywheel (evenly spaced at 2.667° per tooth)
- * - Secondary input: 1 crank home tooth at 62° BTDC cylinder #1
- * - CAM input is handled separately via VVT_SINGLE_TOOTH mode
+ * Audi 5 cylinder trigger wheel implementation
  *
- * Note: Due to rusEFI's event limit (280), we cannot define all 270 teeth (135×2 per 720°).
- * This implementation follows the Tri-Tach pattern: define tooth spacing over 720° as if
- * there were 135 teeth per engine cycle (not per crank rotation). This gives 5.33° spacing
- * instead of 2.67°, but maintains the essential trigger characteristics for sync purposes.
- * The actual 135 teeth/360° resolution is handled by rusEFI's tooth counting logic.
+ * This trigger follows the Tri-Tach pattern for representing a high tooth count wheel.
+ * Due to rusEFI's event limit (280 events), we cannot define all 270 teeth (135×2 per 720°).
  *
- * Users should configure this trigger and verify timing with actual hardware.
+ * Implementation approach:
+ * - Primary channel: First tooth only (sync reference marker)
+ * - Secondary channel: All 135 teeth over 720° engine cycle (5.33° spacing)
+ * - Sync is achieved via the first tooth appearing on both channels
+ * - TDC position: 62° to match expected crank home position
+ *
+ * Physical trigger system (for reference):
+ * - VR 135 crankteeth: 135 evenly-spaced teeth on flywheel (2.667° per tooth)
+ * - VR crank home: Single tooth at 62° BTDC cylinder #1
+ * - CAM HALL: Configured separately via VVT_SINGLE_TOOTH mode
+ *
+ * Users should verify timing calibration with actual hardware.
  */
 // TT_AUDI_5CYL_135_1_1
 void configureAudi5cyl135_1_1(TriggerWaveform *s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
-	// No sync needed on evenly-spaced primary teeth - sync comes from secondary
+	// No sync needed on evenly-spaced secondary teeth - sync comes from primary/secondary overlap
 	s->isSynchronizationNeeded = false;
 
-	// Crank home is at 62° BTDC cylinder #1
+	// TDC position set to match expected crank home location (62° BTDC cylinder #1)
 	s->tdcPosition = 62;
 
 	float toothWidth = 0.5;
@@ -254,20 +258,21 @@ void configureAudi5cyl135_1_1(TriggerWaveform *s) {
 	// Use 135 teeth over 720° (like Tri-Tach) to stay within event limits
 	// This gives 5.33° spacing instead of the actual 2.67° physical spacing
 	int totalTeethCount = 135;
+	float oneTooth = engineCycle / totalTeethCount;
 	float offset = 0;
 
 	// First tooth on both primary and secondary channels (sync reference)
-	float firstToothRise = engineCycle / totalTeethCount * (1 - toothWidth);
-	float firstToothFall = engineCycle / totalTeethCount;
+	float firstToothRise = oneTooth * (1 - toothWidth);
+	float firstToothFall = oneTooth;
 	s->addEventClamped(offset + firstToothRise, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 	s->addEventClamped(offset + firstToothRise + 0.1f, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 	s->addEventClamped(offset + firstToothFall, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 	s->addEventClamped(offset + firstToothFall + 0.1f, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 
 	// Add remaining teeth on secondary channel
-	// Filter to start after the first tooth that we manually added
+	// Filter to start after the first tooth that we manually added (skip events before oneTooth)
 	addSkippedToothTriggerEvents(TriggerWheel::T_SECONDARY, s, totalTeethCount, /* skipped */ 0,
 			toothWidth, offset, engineCycle,
-			/* filterLeft */ 1.0f * FOUR_STROKE_ENGINE_CYCLE / 135,
+			/* filterLeft */ oneTooth,
 			NO_RIGHT_FILTER);
 }
