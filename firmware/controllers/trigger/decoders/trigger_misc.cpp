@@ -225,9 +225,13 @@ void configureArcticCat(TriggerWaveform *s) {
 
 /**
  * Audi 5 cylinder trigger with 3 separate sensors:
- * - Primary: VR 135 crankteeth (evenly-spaced on flywheel, 2.667° per tooth)
- * - Secondary: VR crank home (single tooth at 62° BTDC cylinder #1)
- * - CAM: HALL signal (REQUIRED - must be configured via VVT_SINGLE_TOOTH)
+ *
+ * FLYWHEEL sensors (2 VR sensors):
+ * - Primary: VR sensor reading 135 crankteeth (evenly-spaced, 2.667° per tooth)
+ * - Secondary: VR sensor reading single crank home pin (at 62° BTDC cylinder #1)
+ *
+ * DISTRIBUTOR sensor (1 HALL sensor):
+ * - CAM: HALL sensor in distributor (REQUIRED - must be configured via VVT_SINGLE_TOOTH)
  *
  * IMPORTANT: This trigger REQUIRES the CAM sensor for operation.
  * It cannot run in wasted spark mode or without the CAM signal.
@@ -235,14 +239,14 @@ void configureArcticCat(TriggerWaveform *s) {
  *
  * Physical setup:
  * - 135 teeth per 360° crank rotation = 270 teeth per 720° engine cycle
- * - Crank home tooth appears twice per 720° (once per crank rotation)
- * - CAM signal appears once per 720° (once per cam rotation)
+ * - Crank home pin appears twice per 720° (once per crank rotation)
+ * - CAM signal appears once per 720° (once per cam/distributor rotation)
  *
  * User configuration required:
  * - Trigger type: TT_AUDI_5CYL_135_1_1
- * - Primary input: 135-tooth VR sensor
- * - Secondary input: Crank home VR sensor  
- * - CAM input[0]: CAM HALL sensor
+ * - Primary input: 135-tooth flywheel VR sensor
+ * - Secondary input: Crank home pin flywheel VR sensor
+ * - CAM input[0]: Distributor HALL sensor
  * - VVT Mode[0]: VVT_SINGLE_TOOTH
  * - Engine Sync Cam: 0
  *
@@ -255,8 +259,8 @@ void configureAudi5cyl135_1_1(TriggerWaveform *s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
 	// No gap-based sync needed since primary teeth are evenly spaced
-	// Position reference comes from secondary crank home tooth
-	// Full sequential operation requires CAM signal (configured separately)
+	// Position reference comes from secondary crank home pin on flywheel
+	// Full sequential operation requires CAM signal from distributor
 	s->isSynchronizationNeeded = false;
 	s->shapeWithoutTdc = true;
 
