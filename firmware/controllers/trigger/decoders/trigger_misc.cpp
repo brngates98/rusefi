@@ -247,9 +247,10 @@ void configureAudi5Cyl135_1_1(TriggerWaveform *s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
 	// The 135-tooth wheel has no missing teeth, so we can't sync from gaps
-	// Synchronization comes from the G28 crank home signal (handled separately)
+	// Synchronization comes from the G28 crank home signal (handled via software gating)
 	s->isSynchronizationNeeded = false;
 	s->shapeWithoutTdc = true;           // No gap-based sync available
+	s->needSecondTriggerInput = true;    // Required for G28 secondary signal processing
 	s->tdcPosition = 62;                 // Crank home is 62° BTDC cylinder #1
 
 	float engineCycle = FOUR_STROKE_ENGINE_CYCLE; // 720°
