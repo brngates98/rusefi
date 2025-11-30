@@ -3003,63 +3003,65 @@ struct engine_configuration_s {
 	offset 1444 bit 14 */
 	bool invertSecondaryTriggerSignal : 1 {};
 	/**
-	 * When enabled, this option cuts the fuel supply when the RPM limit is reached. Cutting fuel provides a smoother limiting action; however, it may lead to slightly higher combustion chamber temperatures since unburned fuel is not present to cool the combustion process.
+	 * Enable software gating for Audi 5-cylinder trigger where CAM HALL gates the crank home (G28) signal
 	offset 1444 bit 15 */
+	bool useAudiTriggerGating : 1 {};
+	/**
+	 * Invert the CAM HALL gating logic for Audi 5-cylinder trigger (for sensors with opposite polarity)
+	offset 1444 bit 16 */
+	bool audiCamGateInverted : 1 {};
+	/**
+	 * When enabled, this option cuts the fuel supply when the RPM limit is reached. Cutting fuel provides a smoother limiting action; however, it may lead to slightly higher combustion chamber temperatures since unburned fuel is not present to cool the combustion process.
+	offset 1444 bit 17 */
 	bool cutFuelOnHardLimit : 1 {};
 	/**
 	 * When selected, this option cuts the spark to limit RPM. Cutting spark can produce flames from the exhaust due to unburned fuel igniting in the exhaust system. Additionally, this unburned fuel can help cool the combustion chamber, which may be beneficial in high-performance applications.
 	 * Be careful enabling this: some engines are known to self-disassemble their valvetrain with a spark cut. Fuel cut is much safer.
-	offset 1444 bit 16 */
+	offset 1444 bit 18 */
 	bool cutSparkOnHardLimit : 1 {};
 	/**
-	offset 1444 bit 17 */
+	offset 1444 bit 19 */
 	bool launchFuelCutEnable : 1 {};
 	/**
 	 * This is the Cut Mode normally used
-	offset 1444 bit 18 */
+	offset 1444 bit 20 */
 	bool launchSparkCutEnable : 1 {};
 	/**
-	offset 1444 bit 19 */
+	offset 1444 bit 21 */
 	bool torqueReductionEnabled : 1 {};
 	/**
-	offset 1444 bit 20 */
+	offset 1444 bit 22 */
 	bool camSyncOnSecondCrankRevolution : 1 {};
 	/**
-	offset 1444 bit 21 */
+	offset 1444 bit 23 */
 	bool limitTorqueReductionTime : 1 {};
 	/**
 	 * Are you a developer troubleshooting TS over CAN ISO/TP?
-	offset 1444 bit 22 */
+	offset 1444 bit 24 */
 	bool verboseIsoTp : 1 {};
 	/**
 	 * In this mode only trigger events go into engine sniffer and not coils/injectors etc
-	offset 1444 bit 23 */
+	offset 1444 bit 25 */
 	bool engineSnifferFocusOnInputs : 1 {};
 	/**
-	offset 1444 bit 24 */
+	offset 1444 bit 26 */
 	bool twoStroke : 1 {};
 	/**
 	 * Where is your primary skipped wheel located?
-	offset 1444 bit 25 */
+	offset 1444 bit 27 */
 	bool skippedWheelOnCam : 1 {};
 	/**
-	offset 1444 bit 26 */
-	bool unusedBit_485_26 : 1 {};
-	/**
-	offset 1444 bit 27 */
-	bool unusedBit_485_27 : 1 {};
-	/**
 	offset 1444 bit 28 */
-	bool unusedBit_485_28 : 1 {};
+	bool unusedBit_487_28 : 1 {};
 	/**
 	offset 1444 bit 29 */
-	bool unusedBit_485_29 : 1 {};
+	bool unusedBit_487_29 : 1 {};
 	/**
 	offset 1444 bit 30 */
-	bool unusedBit_485_30 : 1 {};
+	bool unusedBit_487_30 : 1 {};
 	/**
 	offset 1444 bit 31 */
-	bool unusedBit_485_31 : 1 {};
+	bool unusedBit_487_31 : 1 {};
 	/**
 	 * A/C button input
 	 * offset 1448

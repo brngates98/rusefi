@@ -1542,7 +1542,7 @@
 #define SentInput_NONE 0
 #define show_tcu_gauges false
 #define show_vvt_output_pin true
-#define SIGNATURE_HASH 3302766943
+#define SIGNATURE_HASH 2505104112
 #define SIMULATOR_TUNE_BIN_FILE_NAME "generated/simulator_tune_image.bin"
 #define SIMULATOR_TUNE_BIN_FILE_NAME_PREFIX "generated/simulator_tune_image"
 #define SIMULATOR_TUNE_BIN_FILE_NAME_SUFFIX ".bin"
@@ -1639,7 +1639,7 @@
 #define TransmissionControllerMode_SimpleTransmissionController 1
 #define TRIGGER_COMMENT "#"
 #define trigger_config_s_size 12
-#define TRIGGER_CRANK_BASED trigger_type == 2 || trigger_type == 5 || trigger_type == 10 || trigger_type == 12 || trigger_type == 20 || trigger_type == 21 || trigger_type == 26 || trigger_type == 27 || trigger_type == 33 || trigger_type == 38 || trigger_type == 39 || trigger_type == 44 || trigger_type == 45 || trigger_type == 46 || trigger_type == 53 || trigger_type == 55 || trigger_type == 57 || trigger_type == 58 || trigger_type == 61 || trigger_type == 62 || trigger_type == 68 || trigger_type == 70 || trigger_type == 71 || trigger_type == 72 || trigger_type == 74 || trigger_type == 75 || trigger_type == 76 || trigger_type == 77 || trigger_type == 84 || trigger_type == 87 || trigger_type == 92 || trigger_type == 93 || trigger_type == 94
+#define TRIGGER_CRANK_BASED trigger_type == 95
 #define TRIGGER_CYCLE_DURATION "cycleDuration"
 #define TRIGGER_GAP_FROM "gapFrom"
 #define TRIGGER_GAP_TO "gapTo"
@@ -1750,8 +1750,8 @@
 #define trigger_type_e_TT_VVT_SUBARU_7_WITHOUT_6 51
 #define trigger_type_e_TT_VVT_TOYOTA_3_TOOTH 17
 #define trigger_type_e_TT_VVT_TOYOTA_4_1 73
-#define TRIGGER_TYPE_WITH_SECOND_WHEEL trigger_type == 1 || trigger_type == 3 || trigger_type == 15 || trigger_type == 16 || trigger_type == 19 || trigger_type == 25 || trigger_type == 31 || trigger_type == 35 || trigger_type == 36 || trigger_type == 37 || trigger_type == 40 || trigger_type == 49 || trigger_type == 53 || trigger_type == 54 || trigger_type == 63 || trigger_type == 64
-#define TRIGGER_TYPE_WITHOUT_KNOWN_LOCATION trigger_type == 0 || trigger_type == 8 || trigger_type == 9 || trigger_type == 11 || trigger_type == 17 || trigger_type == 18 || trigger_type == 23 || trigger_type == 48 || trigger_type == 69 || trigger_type == 73 || trigger_type == 88 || trigger_type == 89
+#define TRIGGER_TYPE_WITH_SECOND_WHEEL trigger_type == 95
+#define TRIGGER_TYPE_WITHOUT_KNOWN_LOCATION trigger_type == 0
 #define TRIGGER_WITH_SYNC "isSynchronizationNeeded"
 #define TRIGGERS_FILE_NAME "triggers.txt"
 #define TriggerWheel_T_PRIMARY 0
@@ -2131,7 +2131,7 @@
 #define ts_show_wastegate_sensor true
 #define ts_show_wbo_canbus_index true
 #define ts_show_wbo_canbus_set_index true
-#define TS_SIGNATURE "rusEFI copilot/implement-audi-5cylinder-trigger.2025.11.30.f407-discovery.3302766943"
+#define TS_SIGNATURE "rusEFI master.2025.11.30.f407-discovery.2505104112"
 #define TS_SIMULATE_CAN '>'
 #define TS_SIMULATE_CAN_char >
 #define TS_TEST_COMMAND 't'
