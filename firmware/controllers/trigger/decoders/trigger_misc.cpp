@@ -246,11 +246,16 @@ void configureArcticCat(TriggerWaveform *s) {
 void configureAudi5Cyl135_1_1(TriggerWaveform *s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
-	// The 135-tooth wheel has no missing teeth, so we can't sync from gaps
-	// Synchronization comes from the G28 crank home signal (handled via software gating)
+	// The 135-tooth wheel has no missing teeth (no gaps), so there's no gap-based
+	// sync pattern to detect. isSynchronizationNeeded refers to gap detection in
+	// the primary trigger signal, which is not applicable here.
 	s->isSynchronizationNeeded = false;
-	s->shapeWithoutTdc = true;           // No gap-based sync available
-	s->needSecondTriggerInput = true;    // Required for G28 secondary signal processing
+	// shapeWithoutTdc indicates the primary wheel pattern doesn't provide
+	// a unique TDC reference point - TDC sync comes from G28 via software gating
+	s->shapeWithoutTdc = true;
+	// needSecondTriggerInput enables processing of the G28 secondary signal,
+	// which is used with CAM HALL software gating for cycle synchronization
+	s->needSecondTriggerInput = true;
 	s->tdcPosition = 62;                 // Crank home is 62° BTDC cylinder #1
 
 	float engineCycle = FOUR_STROKE_ENGINE_CYCLE; // 720°
