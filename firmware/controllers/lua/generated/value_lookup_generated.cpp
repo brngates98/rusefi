@@ -835,6 +835,12 @@ float getConfigValueByHash(const int hash) {
 // invertSecondaryTriggerSignal
 		case -1944260329:
 			return engineConfiguration->invertSecondaryTriggerSignal;
+// useAudiTriggerGating
+		case 204780355:
+			return engineConfiguration->useAudiTriggerGating;
+// audiCamGateInverted
+		case -505528261:
+			return engineConfiguration->audiCamGateInverted;
 // cutFuelOnHardLimit
 		case -794334344:
 			return engineConfiguration->cutFuelOnHardLimit;
@@ -2041,6 +2047,9 @@ float getConfigValueByHash(const int hash) {
 // dynoCarFrontalAreaM2
 		case -1661556925:
 			return config->dynoCarFrontalAreaM2;
+// technicalDebt7738
+		case 218340072:
+			return config->technicalDebt7738;
 	}
 	return EFI_ERROR_CODE;
 }
@@ -3434,6 +3443,16 @@ bool setConfigValueByName(const char *name, float value) {
 		case -1944260329:
 	{
 		engineConfiguration->invertSecondaryTriggerSignal = (int)value;
+		return 1;
+	}
+		case 204780355:
+	{
+		engineConfiguration->useAudiTriggerGating = (int)value;
+		return 1;
+	}
+		case -505528261:
+	{
+		engineConfiguration->audiCamGateInverted = (int)value;
 		return 1;
 	}
 		case -794334344:
@@ -5444,6 +5463,11 @@ bool setConfigValueByName(const char *name, float value) {
 		case -1661556925:
 	{
 		config->dynoCarFrontalAreaM2 = value;
+		return 1;
+	}
+		case 218340072:
+	{
+		config->technicalDebt7738 = (int)value;
 		return 1;
 	}
 	}
