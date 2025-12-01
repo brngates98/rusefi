@@ -28,6 +28,11 @@ log.txt
 
 .gradle
 
+# Gradle wrapper files generated in subprojects
+java_console/*/gradle/
+java_console/*/gradlew
+java_console/*/gradlew.bat
+
 # Eclipse
 .metadata/
 
