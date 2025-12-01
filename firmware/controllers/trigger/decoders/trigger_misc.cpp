@@ -32,6 +32,7 @@ void configureAudi5Cyl(TriggerWaveform *s) {
 	s->isSynchronizationNeeded = false;
 	s->shapeWithoutTdc = true;
 	s->needSecondTriggerInput = true;
+	// G4 crank reference tooth fires at 62 degrees BTDC cylinder #1
 	s->tdcPosition = 62;
 
 	float toothWidth = 0.5;
