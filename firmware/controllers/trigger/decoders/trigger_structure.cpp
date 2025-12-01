@@ -797,8 +797,8 @@ void TriggerWaveform::initializeTriggerWaveform(operation_mode_e triggerOperatio
 		configureFiatIAQ_P8(this);
 		break;
 
-	case trigger_type_e::TT_TRI_TACH:
-		configureTriTach(this);
+	case trigger_type_e::TT_AUDI_5CYL:
+		configureAudi5Cyl(this);
 		break;
 
 	case trigger_type_e::TT_GM_24x_5:

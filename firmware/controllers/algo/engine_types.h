@@ -169,9 +169,8 @@ enum class trigger_type_e : uint32_t {
 	// todo: remove this trigger once we have https://github.com/rusefi/rusefi/issues/2073
 	TT_VVT_SUBARU_7_WITHOUT_6 = 51,
 	TT_NISSAN_MR18_CAM_VVT = 52,
-	// https://rusefi.com/forum/viewtopic.php?f=5&t=1912
-	// also known as Audi 5 Cyl
-	TT_TRI_TACH = 53,
+	// Audi 5 cylinder - 135 tooth crank wheel, single crank reference, CAM HALL gating
+	TT_AUDI_5CYL = 53,
 	TT_GM_60_2_2_2 = 54,
 	// * https://rusefi.com/forum/viewtopic.php?f=5&t=1937
 	// * HALL sensor, and can be used on all Skoda's engines (from 1000MB to 130, Favorit, Felicia)
