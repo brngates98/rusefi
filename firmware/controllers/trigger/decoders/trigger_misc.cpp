@@ -224,16 +224,19 @@ void configureArcticCat(TriggerWaveform *s) {
 }
 
 // TT_AUDI_5CYL_135_1_1
+// Audi 5 cylinder with 135-tooth crank wheel, G4 reference at 62 degrees BTDC cylinder #1
 void configureAudi5Cyl135_1_1(TriggerWaveform *s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
 	s->isSynchronizationNeeded = false;
 	s->shapeWithoutTdc = true;
 	s->needSecondTriggerInput = true;
+	// G4 reference tooth fires at 62 degrees BTDC cylinder #1
 	s->tdcPosition = 62;
 
 	float toothWidth = 0.5;
 	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	// 135 evenly spaced teeth on crank wheel - no missing teeth
 	int totalTeethCount = 135;
 
 	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, /* skipped */ 0, toothWidth,

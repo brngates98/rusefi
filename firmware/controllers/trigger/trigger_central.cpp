@@ -491,7 +491,7 @@ void handleShaftSignal(int signalIndex, bool isRising, efitick_t timestamp) {
 	// Software gating for Audi 5-cylinder trigger
 	// G40 CAM HALL gates the G4 timing reference to produce one sync pulse per 720 degree cycle
 	if (!isPrimary && engineConfiguration->trigger.type == trigger_type_e::TT_AUDI_5CYL_135_1_1) {
-		// Check G40 CAM HALL state via VVT channel
+		// G40 CAM HALL sensor is connected to VVT/CAM input, state is tracked in vvtChannel1
 		bool camHallState = engine->outputChannels.vvtChannel1;
 		if (!camHallState) {
 			// Gate is closed - ignore this G4 pulse
