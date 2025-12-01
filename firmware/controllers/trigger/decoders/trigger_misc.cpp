@@ -222,3 +222,20 @@ void configureArcticCat(TriggerWaveform *s) {
 
 
 }
+
+// TT_AUDI_5CYL_135_1_1
+void configureAudi5Cyl135_1_1(TriggerWaveform *s) {
+	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+
+	s->isSynchronizationNeeded = false;
+	s->shapeWithoutTdc = true;
+	s->needSecondTriggerInput = true;
+	s->tdcPosition = 62;
+
+	float toothWidth = 0.5;
+	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	int totalTeethCount = 135;
+
+	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, /* skipped */ 0, toothWidth,
+			/* offset */ 0, engineCycle, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+}
