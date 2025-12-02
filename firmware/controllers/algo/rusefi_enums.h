@@ -48,6 +48,7 @@ typedef enum __attribute__ ((__packed__))
 enum class TriggerWheel : uint8_t {
 	T_PRIMARY = 0,
 	T_SECONDARY = 1,
+	T_TERTIARY = 2,
 };
 
 typedef enum  __attribute__ ((__packed__)) {

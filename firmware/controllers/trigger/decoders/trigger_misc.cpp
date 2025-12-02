@@ -222,3 +222,40 @@ void configureArcticCat(TriggerWaveform *s) {
 
 
 }
+
+// TT_AUDI_5_CYL
+// Audi 5-cylinder trigger system with 135-tooth crank, home sensor, and cam sensor
+// Primary: 135 teeth on starter ring (2.67° per tooth)
+// Secondary: Home sensor fires twice per revolution (62° and 134° BTDC)
+// Tertiary: Cam sensor gates which home pulse is used for sync
+void configureAudi5Cyl(TriggerWaveform * s) {
+	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+	s->isSynchronizationNeeded = true;
+	
+	float toothWidth = 0.5;
+	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	int totalTeethCount = 135;
+	
+	// Add 135 teeth on primary channel (crank speed sensor)
+	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, /* skipped */ 0, toothWidth, /* offset */ 0, engineCycle,
+			NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	
+	// Add home sensor pulses on secondary channel
+	// Home pulse at 62° BTDC cylinder 1 (which is 720 - 62 = 658° in engine cycle)
+	float home1Angle = 658.0;
+	s->addEventClamped(home1Angle - 5.0, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	s->addEventClamped(home1Angle + 5.0, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	
+	// Home pulse at 134° BTDC cylinder 5 (which is 360 - 134 = 226° in engine cycle)
+	float home2Angle = 226.0;
+	s->addEventClamped(home2Angle - 5.0, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	s->addEventClamped(home2Angle + 5.0, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	
+	// Add cam sensor on tertiary channel
+	// Cam signal is HIGH from 0° to 360° (first revolution)
+	s->addEventClamped(0.0, TriggerValue::RISE, TriggerWheel::T_TERTIARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	s->addEventClamped(360.0, TriggerValue::FALL, TriggerWheel::T_TERTIARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	
+	// Set synchronization gap to recognize the home pulses
+	s->setTriggerSynchronizationGap(2.0);
+}
