@@ -39,3 +39,9 @@ rusefi_simulator_log.mlg
 
 # bundle
 artifacts
+
+# Gradle wrapper files (submodule-generated)
+**/gradle/wrapper/gradle-wrapper.jar
+**/gradle/wrapper/gradle-wrapper.properties
+**/gradlew
+**/gradlew.bat
