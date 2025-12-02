@@ -40,7 +40,9 @@ void configureAudi5Cyl(TriggerWaveform *s) {
 	
 	// Add home pulses on secondary channel
 	// The home pin on the flywheel triggers twice per 720° cycle:
-	// 1. At 62° BTDC cylinder 1 (cyl 1 TDC is at 0°, so this is at 360° - 62° = 298°)
+	// 1. At 62° BTDC cylinder 1
+	//    TDC cyl 1 is at 0° in the cycle, so 62° Before TDC = 360° - 62° = 298°
+	//    (using positive angle notation where cycle runs from 0° to 720°)
 	// 2. At 134° BTDC cylinder 5 (occurs in second crank revolution)
 	//
 	// Cylinder 5 in firing order 1-2-4-5-3:

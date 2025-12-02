@@ -14,6 +14,8 @@ void configureDaihatsu3cyl(TriggerWaveform * s);
 void configureDaihatsu4cyl(TriggerWaveform * s);
 void configureFordPip(TriggerWaveform * s);
 void configureFordST170(TriggerWaveform * s);
+// DEPRECATED: Use configureAudi5Cyl() from trigger_audi.h instead
+// Kept for backward compatibility only
 void configureTriTach(TriggerWaveform * s);
 // TT_VVT_BARRA_3_PLUS_1
 void configureBarra3plus1cam(TriggerWaveform *s);

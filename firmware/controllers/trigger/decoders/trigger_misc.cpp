@@ -25,7 +25,10 @@ void configureFiatIAQ_P8(TriggerWaveform * s) {
 	s->setTriggerSynchronizationGap(3);
 }
 
-// TT_TRI_TACH
+// TT_TRI_TACH - DEPRECATED
+// This implementation is deprecated. Use TT_AUDI_5_CYL / configureAudi5Cyl() instead.
+// The old implementation didn't properly represent the Audi 5-cylinder trigger system.
+// Kept for backward compatibility only.
 void configureTriTach(TriggerWaveform * s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
