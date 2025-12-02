@@ -25,30 +25,31 @@ void configureFiatIAQ_P8(TriggerWaveform * s) {
 	s->setTriggerSynchronizationGap(3);
 }
 
-// TT_TRI_TACH
+// TT_TRI_TACH - Audi 5-cylinder: 135-tooth crank + single pin reference (G28 + G4)
+// Cam Hall input used separately for phase sync via VVT
 void configureTriTach(TriggerWaveform * s) {
-	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
-
-	s->isSynchronizationNeeded = false;
-
+	// Symmetrical crank pattern - repeats every 360°, needs cam for phase
+	s->initialize(FOUR_STROKE_SYMMETRICAL_CRANK_SENSOR, SyncEdge::RiseOnly);
+	
+	s->isSynchronizationNeeded = false;  // No missing tooth - count-based sync
+	s->needSecondTriggerInput = true;    // G4 single pin on secondary
+	
 	float toothWidth = 0.5;
-
-	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
-
+	float crankCycle = 360.0;            // One crank revolution
 	int totalTeethCount = 135;
-	float offset = 0;
-
-	float angleDown = engineCycle / totalTeethCount * (0 + (1 - toothWidth));
-	float angleUp = engineCycle / totalTeethCount * (0 + 1);
-	s->addEventClamped(offset + angleDown, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleDown + 0.1, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp + 0.1, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-
-
-	addSkippedToothTriggerEvents(TriggerWheel::T_SECONDARY, s, totalTeethCount, /* skipped */ 0, toothWidth, offset, engineCycle,
-			1.0 * FOUR_STROKE_ENGINE_CYCLE / 135,
-			NO_RIGHT_FILTER);
+	
+	// PRIMARY (G28): 135-tooth starter ring gear
+	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, 
+	                              /* skipped */ 0, toothWidth, 
+	                              /* offset */ 0, crankCycle,
+	                              NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	
+	// SECONDARY (G4): Single pin at 62° BTDC cyl 1
+	// In a 360° cycle, 62° BTDC = 298° ATDC
+	float pinPosition = 298.0;
+	float pinWidth = 5.0;       // Narrow pulse from single pin
+	s->addEvent360(pinPosition, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent360(pinPosition + pinWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 }
 
 /**
