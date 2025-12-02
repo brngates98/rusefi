@@ -7,8 +7,8 @@
 
 #pragma once
 
-// 1 crank and CAMS_PER_BANK cam channels
-#define NUM_EMULATOR_CHANNELS (1 + CAMS_PER_BANK)
+// Support emulation for all trigger input channels
+#define NUM_EMULATOR_CHANNELS TRIGGER_INPUT_PIN_COUNT
 
 class PwmConfig;
 class MultiChannelStateSequence;

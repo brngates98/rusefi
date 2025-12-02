@@ -249,9 +249,11 @@ constexpr bool isTriggerUpEvent(trigger_event_e event) {
 	switch (event) {
 		case SHAFT_PRIMARY_FALLING:
 		case SHAFT_SECONDARY_FALLING:
+		case SHAFT_TERTIARY_FALLING:
 			return false;
 		case SHAFT_PRIMARY_RISING:
 		case SHAFT_SECONDARY_RISING:
+		case SHAFT_TERTIARY_RISING:
 			return true;
 	}
 
