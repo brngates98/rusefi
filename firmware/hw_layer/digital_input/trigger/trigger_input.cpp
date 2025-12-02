@@ -141,11 +141,12 @@ void stopTriggerInputPins() {
 }
 
 static const char* const camNames[] = { "cam1", "cam2", "cam3", "cam4"};
+static const char* const triggerNames[] = { "Trigger #1", "Trigger #2", "Trigger #3" };
 
 void startTriggerInputPins() {
 	for (int i = 0; i < TRIGGER_INPUT_PIN_COUNT; i++) {
 		if (isConfigurationChanged(triggerInputPins[i])) {
-			const char * msg = (i == 0 ? "Trigger #1" : (i == 1 ? "Trigger #2" : "Trigger #3"));
+			const char * msg = triggerNames[i];
 			turnOnTriggerInputPin(msg, i, /*isTriggerShaft*/true);
 		}
 	}
