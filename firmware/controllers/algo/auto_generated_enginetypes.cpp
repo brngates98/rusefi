@@ -361,8 +361,8 @@ case trigger_type_e::TT_TOOTHED_WHEEL_60_2:
   return "TT_TOOTHED_WHEEL_60_2";
 case trigger_type_e::TT_TOYOTA_3_TOOTH_UZ:
   return "TT_TOYOTA_3_TOOTH_UZ";
-case trigger_type_e::TT_TRI_TACH:
-  return "TT_TRI_TACH";
+case trigger_type_e::TT_AUDI_5_CYL:
+  return "TT_AUDI_5_CYL";
 case trigger_type_e::TT_UNUSED:
   return "TT_UNUSED";
 case trigger_type_e::TT_UNUSED29:

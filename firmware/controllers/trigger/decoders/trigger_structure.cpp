@@ -38,6 +38,7 @@
 #include "trigger_vw.h"
 #include "trigger_universal.h"
 #include "trigger_mercedes.h"
+#include "trigger_audi.h"
 #include "engine_state.h"
 
 void wrapAngle(angle_t& angle, const char* msg, ObdCode code) {
@@ -797,8 +798,8 @@ void TriggerWaveform::initializeTriggerWaveform(operation_mode_e triggerOperatio
 		configureFiatIAQ_P8(this);
 		break;
 
-	case trigger_type_e::TT_TRI_TACH:
-		configureTriTach(this);
+	case trigger_type_e::TT_AUDI_5_CYL:
+		configureAudi5Cyl(this);
 		break;
 
 	case trigger_type_e::TT_GM_24x_5:

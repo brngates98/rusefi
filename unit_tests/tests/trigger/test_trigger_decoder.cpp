@@ -1231,3 +1231,30 @@ TEST(big, testAssertWeAreNotMissingASpark299) {
 
 	ASSERT_EQ( 0u,  getRecentWarnings()->getCount()) << "warningCounter#1";
 }
+
+TEST(trigger, testAudi5Cyl) {
+	printf("======================= testAudi5Cyl\r\n");
+
+	EngineTestHelper eth(engine_type_e::TEST_ENGINE);
+	eth.setTriggerType(trigger_type_e::TT_AUDI_5_CYL);
+
+	TriggerWaveform *shape = &eth.engine.triggerCentral.triggerShape;
+
+	// Verify trigger configuration
+	ASSERT_TRUE(shape->needSecondTriggerInput) << "needSecondTriggerInput";
+	ASSERT_TRUE(shape->isSynchronizationNeeded) << "isSynchronizationNeeded";
+	ASSERT_FALSE(shape->useOnlyPrimaryForSync) << "useOnlyPrimaryForSync";
+
+	// Verify tooth count
+	// 135 teeth on primary channel, each tooth has rise and fall = 270 events for primary
+	// Plus 4 events for secondary (2 home pulses, each with rise and fall)
+	// Total = 274 events
+	ASSERT_EQ(274, shape->getSize()) << "trigger size";
+
+	// Verify primary channel has expected events (135 teeth * 2 edges = 270)
+	ASSERT_EQ(270u, shape->getExpectedEventCount(TriggerWheel::T_PRIMARY)) << "primary channel event count";
+	
+	// Verify secondary channel has expected events (2 home pulses * 2 edges = 4)
+	ASSERT_EQ(4u, shape->getExpectedEventCount(TriggerWheel::T_SECONDARY)) << "secondary channel event count";
+}
+
