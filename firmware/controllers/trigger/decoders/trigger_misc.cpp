@@ -25,34 +25,32 @@ void configureFiatIAQ_P8(TriggerWaveform * s) {
 	s->setTriggerSynchronizationGap(3);
 }
 
-// TT_TRI_TACH
+// TT_TRI_TACH - Audi 5-cylinder: 135-tooth crank + single pin reference (G28 + G4)
+// G28: 135-tooth starter ring gear at crank speed (135 pulses per 360°)
+// G4: Single steel pin at 62° BTDC, also at crank speed (1 pulse per 360°)
+// Cam Hall sensor used separately via VVT input for phase sync
 void configureTriTach(TriggerWaveform * s) {
-	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+	// Symmetrical crank pattern - repeats every 360°, needs cam for phase
+	s->initialize(FOUR_STROKE_SYMMETRICAL_CRANK_SENSOR, SyncEdge::FallOnly);
 
-	s->needSecondTriggerInput = true;      // G4 pin required for sync
-	s->isSynchronizationNeeded = true;     // Need to sync on G4
+	s->needSecondTriggerInput = true;      // G4 pin on secondary channel
+	s->isSynchronizationNeeded = true;     // Need to sync
 	s->useOnlyPrimaryForSync = false;      // Sync uses secondary channel (G4)
 
-	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;  // 720°
 	float toothWidth = 0.5;
+	float crankCycle = 360.0;              // One crank revolution
 
-	// 135 teeth over 720° with RiseOnly mode
-	// addSkippedToothTriggerEvents adds 2 events per tooth (RISE + FALL)
-	// With 0 skipped teeth: (135-0-1)*2 + 2 = 270 events
-	// The -1 accounts for special handling of the last tooth to avoid rounding error
+	// PRIMARY (G28): 135-tooth starter ring gear over 360°
+	// 135 teeth × 2 events (rise + fall) = 270 events
 	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, 
 	                              135, 0, toothWidth, 
-	                              0, engineCycle,
+	                              0, crankCycle,
 	                              NO_LEFT_FILTER, NO_RIGHT_FILTER);
 
-	// G4 sync pin - fires once per 360° (twice per 720° engine cycle)
-	// G4 at ~298° (62° BTDC) - this is the sync reference point
+	// SECONDARY (G4): Single pin at 62° BTDC = 298° ATDC
+	// G4 provides sync reference point
 	s->addEvent360(298, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
 	s->addEvent360(303, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
-
-	// Second G4 pulse at 298 + 360 = 658°
-	s->addEvent360(658, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
-	s->addEvent360(663, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 }
 
 /**
@@ -212,17 +210,16 @@ void configureArcticCat(TriggerWaveform *s) {
   float toothWidth = 0.5;
 
     addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, 0, toothWidth, /*offset*/0, engineCycle,
-    		/*from*/ 30 + 1, /* to */ 195 + 1);
+			/*from*/ 30 + 1, /* to */ 195 + 1);
 
 
     addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, 0, toothWidth, /*offset*/0, engineCycle,
-    		/*from*/ 210 + 1, /* to */ NO_RIGHT_FILTER);
+			/*from*/ 210 + 1, /* to */ NO_RIGHT_FILTER);
 
   s->setTriggerSynchronizationGap(2);
   int c = 9;
   for (int gapIndex = 1; gapIndex <= c; gapIndex++) {
     s->setTriggerSynchronizationGap3(gapIndex, 0.75, 1.25);
   }
-
 
 }
