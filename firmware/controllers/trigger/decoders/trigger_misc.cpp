@@ -36,7 +36,9 @@ void configureTriTach(TriggerWaveform * s) {
 	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;  // 720°
 	float toothWidth = 0.5;
 
-	// 135 teeth over 720° with RiseOnly = 270 events
+	// 135 teeth over 720° with RiseOnly mode
+	// addSkippedToothTriggerEvents adds 2 events per tooth (RISE + FALL)
+	// With 0 skipped teeth: (135-0-1)*2 + 2 = 270 events
 	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, 
 	                              135, 0, toothWidth, 
 	                              0, engineCycle,
