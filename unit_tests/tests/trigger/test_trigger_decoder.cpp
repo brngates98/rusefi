@@ -1231,3 +1231,21 @@ TEST(big, testAssertWeAreNotMissingASpark299) {
 
 	ASSERT_EQ( 0u,  getRecentWarnings()->getCount()) << "warningCounter#1";
 }
+
+TEST(trigger, testTriTachEventCount) {
+	EngineTestHelper eth(engine_type_e::TEST_ENGINE);
+	eth.setTriggerType(trigger_type_e::TT_TRI_TACH);
+	
+	TriggerWaveform * s = &engine->triggerCentral.triggerShape;
+	
+	// Verify event count is under the PWM_PHASE_MAX_COUNT limit
+	// Expected: 135 teeth × 2 (RiseOnly over 720°) + 4 G4 events = 274 total
+	size_t eventCount = s->getSize();
+	ASSERT_EQ(274u, eventCount) << "TT_TRI_TACH event count";
+	ASSERT_LT(eventCount, 280u) << "Event count must be under PWM_PHASE_MAX_COUNT (280)";
+	
+	// Verify configuration flags
+	ASSERT_TRUE(s->needSecondTriggerInput) << "Should require G4 secondary input";
+	ASSERT_TRUE(s->isSynchronizationNeeded) << "Should need synchronization";
+	ASSERT_FALSE(s->useOnlyPrimaryForSync) << "Should use secondary (G4) for sync";
+}
