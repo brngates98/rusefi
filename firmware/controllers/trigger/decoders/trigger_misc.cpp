@@ -51,6 +51,46 @@ void configureTriTach(TriggerWaveform * s) {
 			NO_RIGHT_FILTER);
 }
 
+// TT_AUDI_5_CYL
+// Audi 5-cylinder trigger with 135-tooth crank wheel, home signal, and cam Hall sensor
+void configureAudi5Cyl(TriggerWaveform * s) {
+	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+	s->isSynchronizationNeeded = true;
+	s->needSecondTriggerInput = true;
+	s->useThirdTriggerInput = true;
+
+	float toothWidth = 0.5;
+	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	int totalTeethCount = 135;
+	float toothAngle = engineCycle / totalTeethCount; // 2.67 degrees per tooth
+
+	// Add 135 teeth on primary (crank) channel
+	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, /* skipped */ 0, 
+		toothWidth, 0, engineCycle, toothAngle, NO_RIGHT_FILTER);
+
+	// Secondary channel: Home signal fires twice per crank revolution (4 times per 720° cycle)
+	// At 62° BTDC cyl1 and 134° BTDC cyl5
+	// In engine cycle degrees (assuming TDC cyl1 is at 0°):
+	// First home pulse at 298° (360 - 62)
+	// Second home pulse at 586° (360 + 360 - 134)
+	float homePulseWidth = 5.0; // Width of home pulse in degrees
+	
+	// First home pulse (at 62° BTDC cyl1 = 298° ATDC)
+	s->addEventAngle(298.0 - homePulseWidth/2, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEventAngle(298.0 + homePulseWidth/2, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	
+	// Second home pulse (at 134° BTDC cyl5 = 586° ATDC)
+	s->addEventAngle(586.0 - homePulseWidth/2, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEventAngle(586.0 + homePulseWidth/2, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+
+	// Tertiary channel: Cam Hall sensor - HIGH for 360°, LOW for 360°
+	// Used to gate the home signal for 720° synchronization
+	s->addEventAngle(0, TriggerValue::RISE, TriggerWheel::T_TERTIARY);
+	s->addEventAngle(360.0, TriggerValue::FALL, TriggerWheel::T_TERTIARY);
+
+	s->setTriggerSynchronizationGap(0.5); // Relatively tight gap for the 135 tooth wheel
+}
+
 /**
  * based on https://fordsix.com/threads/understanding-standard-and-signature-pip-thick-film-ignition.81515/
  * based on https://www.w8ji.com/distributor_stabbing.htm

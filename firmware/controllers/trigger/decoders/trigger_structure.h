@@ -74,6 +74,7 @@ public:
 	 * that's the way to ignore noise from the disconnected wire
 	 */
 	bool needSecondTriggerInput = false;
+	bool useThirdTriggerInput = false;
 	/**
 	 * true value here means that we do not have a valid trigger configuration
 	 */
