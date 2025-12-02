@@ -232,12 +232,16 @@ void configureAudi5Cyl(TriggerWaveform * s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 	s->isSynchronizationNeeded = true;
 	
-	float toothWidth = 0.5;
-	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
-	int totalTeethCount = 135;
+	const float toothWidth = 0.5;
+	const float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	const int totalTeethCount = 135;
 	
 	// Home sensor pulse width in degrees
 	const float homePulseHalfWidth = 5.0;
+	
+	// Home sensor timing: 62° BTDC cyl 1 and 134° BTDC cyl 5
+	const float home1Btdc = 62.0;
+	const float home2Btdc = 134.0;
 	
 	// Add 135 teeth on primary channel (crank speed sensor)
 	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, totalTeethCount, /* skipped */ 0, toothWidth, /* offset */ 0, engineCycle,
@@ -245,12 +249,12 @@ void configureAudi5Cyl(TriggerWaveform * s) {
 	
 	// Add home sensor pulses on secondary channel
 	// Home pulse at 62° BTDC cylinder 1 (converted to engine cycle angle: 720 - 62 = 658°)
-	float home1AngleBtdc62 = 658.0;
+	float home1AngleBtdc62 = 720.0 - home1Btdc;
 	s->addEventClamped(home1AngleBtdc62 - homePulseHalfWidth, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 	s->addEventClamped(home1AngleBtdc62 + homePulseHalfWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 	
 	// Home pulse at 134° BTDC cylinder 5 (converted to engine cycle angle: 360 - 134 = 226°)
-	float home2AngleBtdc134 = 226.0;
+	float home2AngleBtdc134 = 360.0 - home2Btdc;
 	s->addEventClamped(home2AngleBtdc134 - homePulseHalfWidth, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 	s->addEventClamped(home2AngleBtdc134 + homePulseHalfWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 	
