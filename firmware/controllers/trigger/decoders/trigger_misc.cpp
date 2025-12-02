@@ -29,26 +29,27 @@ void configureFiatIAQ_P8(TriggerWaveform * s) {
 void configureTriTach(TriggerWaveform * s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
-	s->isSynchronizationNeeded = false;
+	s->needSecondTriggerInput = true;      // G4 pin required for sync
+	s->isSynchronizationNeeded = true;     // Need to sync on G4
+	s->useOnlyPrimaryForSync = false;      // Sync uses secondary channel (G4)
 
+	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;  // 720°
 	float toothWidth = 0.5;
 
-	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	// 135 teeth over 720° with RiseOnly = 270 events
+	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, 
+	                              135, 0, toothWidth, 
+	                              0, engineCycle,
+	                              NO_LEFT_FILTER, NO_RIGHT_FILTER);
 
-	int totalTeethCount = 135;
-	float offset = 0;
+	// G4 sync pin - fires once per 360° (twice per 720° engine cycle)
+	// G4 at ~298° (62° BTDC) - this is the sync reference point
+	s->addEvent360(298, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent360(303, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 
-	float angleDown = engineCycle / totalTeethCount * (0 + (1 - toothWidth));
-	float angleUp = engineCycle / totalTeethCount * (0 + 1);
-	s->addEventClamped(offset + angleDown, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleDown + 0.1, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp + 0.1, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-
-
-	addSkippedToothTriggerEvents(TriggerWheel::T_SECONDARY, s, totalTeethCount, /* skipped */ 0, toothWidth, offset, engineCycle,
-			1.0 * FOUR_STROKE_ENGINE_CYCLE / 135,
-			NO_RIGHT_FILTER);
+	// Second G4 pulse at 298 + 360 = 658°
+	s->addEvent360(658, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent360(663, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 }
 
 /**
