@@ -1231,3 +1231,22 @@ TEST(big, testAssertWeAreNotMissingASpark299) {
 
 	ASSERT_EQ( 0u,  getRecentWarnings()->getCount()) << "warningCounter#1";
 }
+
+TEST(trigger, testTriTach) {
+	EngineTestHelper eth(engine_type_e::TEST_ENGINE);
+	eth.setTriggerType(trigger_type_e::TT_TRI_TACH);
+
+	TriggerWaveform *s = &engine->triggerCentral.triggerShape;
+
+	// Verify it's a symmetrical crank sensor (360° cycle)
+	ASSERT_EQ(360, s->getCycleDuration()) << "TT_TRI_TACH cycle duration";
+	
+	// Verify event count: 135 teeth * 2 (rise+fall) + 2 secondary events = 272 events
+	ASSERT_EQ(272u, s->getSize()) << "TT_TRI_TACH event count";
+	
+	// Verify it needs second trigger input (G4 single pin)
+	ASSERT_TRUE(s->needSecondTriggerInput) << "TT_TRI_TACH needs secondary input";
+	
+	// Verify synchronization is not needed (count-based)
+	ASSERT_FALSE(s->isSynchronizationNeeded) << "TT_TRI_TACH sync not needed";
+}
