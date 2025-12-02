@@ -1,6 +1,6 @@
 #include "global.h"
 #include "rusefi_enums.h"
-// was generated automatically by rusEFI tool  from rusefi_enums.h // by enum_to_string.jar tool on Mon Oct 27 13:11:54 UTC 2025
+// was generated automatically by rusEFI tool  from rusefi_enums.h // by enum_to_string.jar tool on Tue Dec 02 03:35:30 UTC 2025
 // see also gen_config_and_enums.bat
 
 
@@ -168,6 +168,8 @@ case TriggerWheel::T_PRIMARY:
   return "T_PRIMARY";
 case TriggerWheel::T_SECONDARY:
   return "T_SECONDARY";
+case TriggerWheel::T_TERTIARY:
+  return "T_TERTIARY";
   }
  return NULL;
 }
