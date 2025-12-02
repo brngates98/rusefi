@@ -593,8 +593,8 @@ bool TriggerNoiseFilter::noiseFilter(efitick_t nowNt,
 		TriggerDecoderBase * triggerState,
 		trigger_event_e signal) {
 	// todo: find a better place for these defs
-	static const trigger_event_e opposite[4] = { SHAFT_PRIMARY_RISING, SHAFT_PRIMARY_FALLING, SHAFT_SECONDARY_RISING, SHAFT_SECONDARY_FALLING };
-	static const TriggerWheel triggerIdx[4] = { TriggerWheel::T_PRIMARY, TriggerWheel::T_PRIMARY, TriggerWheel::T_SECONDARY, TriggerWheel:: T_SECONDARY };
+	static const trigger_event_e opposite[6] = { SHAFT_PRIMARY_RISING, SHAFT_PRIMARY_FALLING, SHAFT_SECONDARY_RISING, SHAFT_SECONDARY_FALLING, SHAFT_TERTIARY_RISING, SHAFT_TERTIARY_FALLING };
+	static const TriggerWheel triggerIdx[6] = { TriggerWheel::T_PRIMARY, TriggerWheel::T_PRIMARY, TriggerWheel::T_SECONDARY, TriggerWheel::T_SECONDARY, TriggerWheel::T_TERTIARY, TriggerWheel::T_TERTIARY };
 	// we process all trigger channels independently
 	TriggerWheel ti = triggerIdx[signal];
 	// falling is opposite to rising, and vise versa

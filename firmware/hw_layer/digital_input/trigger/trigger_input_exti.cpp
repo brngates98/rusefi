@@ -30,7 +30,6 @@ static void shaft_callback(void *arg, efitick_t stamp) {
 	ioline_t pal_line = shaftLines[index];
 	bool rise = (palReadLine(pal_line) == PAL_HIGH);
 
-	// todo: support for 3rd trigger input channel
 	// todo: start using real event time from HW event, not just software timer?
 
 	hwHandleShaftSignal(index, rise, stamp);

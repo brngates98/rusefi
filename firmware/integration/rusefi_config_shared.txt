@@ -22,7 +22,7 @@
 #define PACK_MULT_VSS 100
 
 ! technically that's PWM_PHASE_MAX_WAVE_PER_PWM * 2
-#define HW_EVENT_TYPES 4
+#define HW_EVENT_TYPES 6
 
 ! Short and Long term fuel corrections
 #define FT_BANK_COUNT 2
