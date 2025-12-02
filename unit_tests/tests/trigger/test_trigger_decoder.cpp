@@ -1241,7 +1241,7 @@ TEST(trigger, testTriTach) {
 	// Verify it's a symmetrical crank sensor (360° cycle)
 	ASSERT_EQ(360, s->getCycleDuration()) << "TT_TRI_TACH cycle duration";
 	
-	// Verify event count: 135 teeth * 2 (rise+fall) + 2 secondary events = 272 events
+	// Verify event count: 135 teeth * 2 edges (rise+fall) + 2 secondary = 272 events
 	ASSERT_EQ(272u, s->getSize()) << "TT_TRI_TACH event count";
 	
 	// Verify it needs second trigger input (G4 single pin)
