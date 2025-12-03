@@ -10,7 +10,7 @@
 #include "trigger_pattern.h"
 
 // Pattern count
-#define TRIGGER_PATTERN_COUNT 10
+#define TRIGGER_PATTERN_COUNT 18
 
 // Forward declarations
 extern const TriggerPatternData pattern_TT_TOOTHED_WHEEL_60_2;
@@ -23,6 +23,14 @@ extern const TriggerPatternData pattern_TT_FORD_ASPIRE;
 extern const TriggerPatternData pattern_TT_GM_7X;
 extern const TriggerPatternData pattern_TT_HONDA_K_CRANK_12_1;
 extern const TriggerPatternData pattern_TT_MAZDA_MIATA_NA;
+extern const TriggerPatternData pattern_TT_NISSAN_QR25;
+extern const TriggerPatternData pattern_TT_SUBARU_7_6;
+extern const TriggerPatternData pattern_TT_2JZ_3_34_SIMULATION_ONLY;
+extern const TriggerPatternData pattern_TT_ONE_PLUS_ONE;
+extern const TriggerPatternData pattern_TT_3_1_CAM;
+extern const TriggerPatternData pattern_TT_HALF_MOON;
+extern const TriggerPatternData pattern_TT_MERCEDES_2_SEGMENT;
+extern const TriggerPatternData pattern_TT_ROVER_K;
 
 // Pattern lookup function
 const TriggerPatternData* getTriggerPattern(trigger_type_e type);

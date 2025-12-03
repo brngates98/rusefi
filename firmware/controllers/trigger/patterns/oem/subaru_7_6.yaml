@@ -1,0 +1,53 @@
+name: "Subaru 7-6"
+id: TT_SUBARU_7_6
+operation_mode: FOUR_STROKE_CAM_SENSOR
+sync_edge: Rise
+
+channels:
+  primary:
+    type: custom
+    events:
+      # 7 teeth at front
+      - { angle: 0.0, edge: rise }
+      - { angle: 5.0, edge: fall }
+      - { angle: 30.0, edge: rise }
+      - { angle: 35.0, edge: fall }
+      - { angle: 60.0, edge: rise }
+      - { angle: 65.0, edge: fall }
+      - { angle: 90.0, edge: rise }
+      - { angle: 95.0, edge: fall }
+      - { angle: 120.0, edge: rise }
+      - { angle: 125.0, edge: fall }
+      - { angle: 150.0, edge: rise }
+      - { angle: 155.0, edge: fall }
+      - { angle: 180.0, edge: rise }
+      - { angle: 185.0, edge: fall }
+      # Gap
+      # 6 teeth at rear
+      - { angle: 540.0, edge: rise }
+      - { angle: 545.0, edge: fall }
+      - { angle: 570.0, edge: rise }
+      - { angle: 575.0, edge: fall }
+      - { angle: 600.0, edge: rise }
+      - { angle: 605.0, edge: fall }
+      - { angle: 630.0, edge: rise }
+      - { angle: 635.0, edge: fall }
+      - { angle: 660.0, edge: rise }
+      - { angle: 665.0, edge: fall }
+      - { angle: 690.0, edge: rise }
+      - { angle: 695.0, edge: fall }
+
+sync:
+  gaps:
+    - { index: 0, from: 3.0, to: 20.0 }
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: false
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  Subaru 7-6 cam sensor pattern
+  7 teeth followed by a large gap, then 6 teeth

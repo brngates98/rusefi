@@ -298,6 +298,265 @@ const TriggerPatternData pattern_TT_MAZDA_MIATA_NA = {
     .knownOperationMode = true,
 };
 
+// Pattern: Nissan QR25
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/nissan_qr25.yaml
+static const GapSpec gaps_TT_NISSAN_QR25[] = {
+    { 0, 1.6f, 3.5f },
+};
+
+const TriggerPatternData pattern_TT_NISSAN_QR25 = {
+    .name = "Nissan QR25",
+    .id = trigger_type_e::TT_NISSAN_QR25,
+    .operationMode = operation_mode_e::FOUR_STROKE_CRANK_SENSOR,
+    .syncEdge = SyncEdge::RiseOnly,
+    .patternType = PatternType::SKIPPED_TOOTH,
+    .totalTeeth = 36,
+    .missingTeeth = 2,
+    .events = nullptr,
+    .eventCount = 0,
+    .gaps = gaps_TT_NISSAN_QR25,
+    .gapCount = 1,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = true,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: Subaru 7-6
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/subaru_7_6.yaml
+static const ToothSpec events_TT_SUBARU_7_6[] = {
+    { 0.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 5.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 30.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 35.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 60.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 65.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 90.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 95.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 120.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 125.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 150.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 155.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 180.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 185.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 540.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 545.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 570.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 575.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 600.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 605.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 630.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 635.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 660.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 665.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 690.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 695.0f, EdgeType::FALL, TriggerChannel::CRANK },
+};
+
+static const GapSpec gaps_TT_SUBARU_7_6[] = {
+    { 0, 3.0f, 20.0f },
+};
+
+const TriggerPatternData pattern_TT_SUBARU_7_6 = {
+    .name = "Subaru 7-6",
+    .id = trigger_type_e::TT_SUBARU_7_6,
+    .operationMode = operation_mode_e::FOUR_STROKE_CAM_SENSOR,
+    .syncEdge = SyncEdge::Rise,
+    .patternType = PatternType::CUSTOM,
+    .totalTeeth = 0,
+    .missingTeeth = 0,
+    .events = events_TT_SUBARU_7_6,
+    .eventCount = 26,
+    .gaps = gaps_TT_SUBARU_7_6,
+    .gapCount = 1,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = false,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: Toyota 2JZ 3-34
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/toyota_2jz_3_34.yaml
+static const ToothSpec events_TT_2JZ_3_34_SIMULATION_ONLY[] = {
+    { 0.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 5.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 20.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 25.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 40.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 45.0f, EdgeType::FALL, TriggerChannel::CRANK },
+};
+
+static const GapSpec gaps_TT_2JZ_3_34_SIMULATION_ONLY[] = {
+    { 0, 3.0f, 20.0f },
+};
+
+const TriggerPatternData pattern_TT_2JZ_3_34_SIMULATION_ONLY = {
+    .name = "Toyota 2JZ 3-34",
+    .id = trigger_type_e::TT_2JZ_3_34_SIMULATION_ONLY,
+    .operationMode = operation_mode_e::FOUR_STROKE_CAM_SENSOR,
+    .syncEdge = SyncEdge::RiseOnly,
+    .patternType = PatternType::CUSTOM,
+    .totalTeeth = 0,
+    .missingTeeth = 0,
+    .events = events_TT_2JZ_3_34_SIMULATION_ONLY,
+    .eventCount = 6,
+    .gaps = gaps_TT_2JZ_3_34_SIMULATION_ONLY,
+    .gapCount = 1,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = false,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: One Plus One
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/one_plus_one.yaml
+static const ToothSpec events_TT_ONE_PLUS_ONE[] = {
+    { 0.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 180.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 180.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 360.0f, EdgeType::FALL, TriggerChannel::CRANK },
+};
+
+const TriggerPatternData pattern_TT_ONE_PLUS_ONE = {
+    .name = "One Plus One",
+    .id = trigger_type_e::TT_ONE_PLUS_ONE,
+    .operationMode = operation_mode_e::FOUR_STROKE_CRANK_SENSOR,
+    .syncEdge = SyncEdge::Rise,
+    .patternType = PatternType::CUSTOM,
+    .totalTeeth = 0,
+    .missingTeeth = 0,
+    .events = events_TT_ONE_PLUS_ONE,
+    .eventCount = 4,
+    .gaps = nullptr,
+    .gapCount = 0,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = true,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: 3-1 Cam Pattern
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/3_1_cam.yaml
+static const ToothSpec events_TT_3_1_CAM[] = {
+    { 0.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 60.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 180.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 240.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 360.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 420.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 540.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 600.0f, EdgeType::FALL, TriggerChannel::CRANK },
+};
+
+static const GapSpec gaps_TT_3_1_CAM[] = {
+    { 0, 1.5f, 3.0f },
+};
+
+const TriggerPatternData pattern_TT_3_1_CAM = {
+    .name = "3-1 Cam Pattern",
+    .id = trigger_type_e::TT_3_1_CAM,
+    .operationMode = operation_mode_e::FOUR_STROKE_CAM_SENSOR,
+    .syncEdge = SyncEdge::RiseOnly,
+    .patternType = PatternType::CUSTOM,
+    .totalTeeth = 0,
+    .missingTeeth = 0,
+    .events = events_TT_3_1_CAM,
+    .eventCount = 8,
+    .gaps = gaps_TT_3_1_CAM,
+    .gapCount = 1,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = false,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: Half Moon
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/half_moon.yaml
+const TriggerPatternData pattern_TT_HALF_MOON = {
+    .name = "Half Moon",
+    .id = trigger_type_e::TT_HALF_MOON,
+    .operationMode = operation_mode_e::FOUR_STROKE_CRANK_SENSOR,
+    .syncEdge = SyncEdge::Rise,
+    .patternType = PatternType::SKIPPED_TOOTH,
+    .totalTeeth = 1,
+    .missingTeeth = 0,
+    .events = nullptr,
+    .eventCount = 0,
+    .gaps = nullptr,
+    .gapCount = 0,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = true,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: Mercedes 2-Segment
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/mercedes_2_segment.yaml
+static const ToothSpec events_TT_MERCEDES_2_SEGMENT[] = {
+    { 0.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 30.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 180.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 210.0f, EdgeType::FALL, TriggerChannel::CRANK },
+};
+
+const TriggerPatternData pattern_TT_MERCEDES_2_SEGMENT = {
+    .name = "Mercedes 2-Segment",
+    .id = trigger_type_e::TT_MERCEDES_2_SEGMENT,
+    .operationMode = operation_mode_e::FOUR_STROKE_CRANK_SENSOR,
+    .syncEdge = SyncEdge::Rise,
+    .patternType = PatternType::CUSTOM,
+    .totalTeeth = 0,
+    .missingTeeth = 0,
+    .events = events_TT_MERCEDES_2_SEGMENT,
+    .eventCount = 4,
+    .gaps = nullptr,
+    .gapCount = 0,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = true,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: Rover K-Series
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/rover_k.yaml
+static const GapSpec gaps_TT_ROVER_K[] = {
+    { 0, 1.5f, 3.0f },
+};
+
+const TriggerPatternData pattern_TT_ROVER_K = {
+    .name = "Rover K-Series",
+    .id = trigger_type_e::TT_ROVER_K,
+    .operationMode = operation_mode_e::FOUR_STROKE_CRANK_SENSOR,
+    .syncEdge = SyncEdge::RiseOnly,
+    .patternType = PatternType::SKIPPED_TOOTH,
+    .totalTeeth = 36,
+    .missingTeeth = 1,
+    .events = nullptr,
+    .eventCount = 0,
+    .gaps = gaps_TT_ROVER_K,
+    .gapCount = 1,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = true,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
 
 const TriggerPatternData* getTriggerPattern(trigger_type_e type) {
     switch(type) {
@@ -321,6 +580,22 @@ const TriggerPatternData* getTriggerPattern(trigger_type_e type) {
             return &pattern_TT_HONDA_K_CRANK_12_1;
         case trigger_type_e::TT_MAZDA_MIATA_NA:
             return &pattern_TT_MAZDA_MIATA_NA;
+        case trigger_type_e::TT_NISSAN_QR25:
+            return &pattern_TT_NISSAN_QR25;
+        case trigger_type_e::TT_SUBARU_7_6:
+            return &pattern_TT_SUBARU_7_6;
+        case trigger_type_e::TT_2JZ_3_34_SIMULATION_ONLY:
+            return &pattern_TT_2JZ_3_34_SIMULATION_ONLY;
+        case trigger_type_e::TT_ONE_PLUS_ONE:
+            return &pattern_TT_ONE_PLUS_ONE;
+        case trigger_type_e::TT_3_1_CAM:
+            return &pattern_TT_3_1_CAM;
+        case trigger_type_e::TT_HALF_MOON:
+            return &pattern_TT_HALF_MOON;
+        case trigger_type_e::TT_MERCEDES_2_SEGMENT:
+            return &pattern_TT_MERCEDES_2_SEGMENT;
+        case trigger_type_e::TT_ROVER_K:
+            return &pattern_TT_ROVER_K;
         default:
             return nullptr;
     }

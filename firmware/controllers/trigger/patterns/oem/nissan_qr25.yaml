@@ -1,0 +1,25 @@
+name: "Nissan QR25"
+id: TT_NISSAN_QR25
+operation_mode: FOUR_STROKE_CRANK_SENSOR
+sync_edge: RiseOnly
+
+channels:
+  primary:
+    type: skipped_tooth
+    total_teeth: 36
+    missing_teeth: 2
+
+sync:
+  gaps:
+    - { index: 0, from: 1.6, to: 3.5 }
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: true
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  Nissan QR25DE engine crankshaft trigger
+  36-2 pattern similar to many other manufacturers

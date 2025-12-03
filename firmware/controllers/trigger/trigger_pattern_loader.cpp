@@ -9,6 +9,7 @@
 #include "pch.h"
 #include "trigger_pattern_loader.h"
 #include "trigger_universal.h"
+#include "state_sequence.h"
 
 void initializeFromPattern(TriggerWaveform* waveform, const TriggerPatternData* pattern) {
 	if (!waveform || !pattern) {

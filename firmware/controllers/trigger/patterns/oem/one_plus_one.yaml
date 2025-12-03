@@ -1,0 +1,26 @@
+name: "One Plus One"
+id: TT_ONE_PLUS_ONE
+operation_mode: FOUR_STROKE_CRANK_SENSOR
+sync_edge: Rise
+
+channels:
+  primary:
+    type: custom
+    events:
+      - { angle: 0.0, edge: rise }
+      - { angle: 180.0, edge: fall }
+      - { angle: 180.0, edge: rise }
+      - { angle: 360.0, edge: fall }
+
+sync:
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: true
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  Simple one pulse per revolution pattern
+  Used for basic distributor-based systems

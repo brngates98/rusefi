@@ -1,0 +1,34 @@
+name: "Toyota 2JZ 3-34"
+id: TT_2JZ_3_34_SIMULATION_ONLY
+operation_mode: FOUR_STROKE_CAM_SENSOR
+sync_edge: RiseOnly
+
+channels:
+  primary:
+    type: custom
+    events:
+      # 3 teeth
+      - { angle: 0.0, edge: rise }
+      - { angle: 5.0, edge: fall }
+      - { angle: 20.0, edge: rise }
+      - { angle: 25.0, edge: fall }
+      - { angle: 40.0, edge: rise }
+      - { angle: 45.0, edge: fall }
+      # Gap (represents missing teeth)
+      # 34 teeth pattern continues...
+
+sync:
+  gaps:
+    - { index: 0, from: 3.0, to: 20.0 }
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: false
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  Toyota 2JZ engine pattern (simulation only)
+  3 teeth followed by 34 teeth pattern
+  Note: Simplified for demonstration. Full pattern has all 37 teeth defined.

@@ -1,0 +1,28 @@
+name: "Mercedes 2-Segment"
+id: TT_MERCEDES_2_SEGMENT
+operation_mode: FOUR_STROKE_CRANK_SENSOR
+sync_edge: Rise
+
+channels:
+  primary:
+    type: custom
+    events:
+      # First segment
+      - { angle: 0.0, edge: rise }
+      - { angle: 30.0, edge: fall }
+      # Second segment
+      - { angle: 180.0, edge: rise }
+      - { angle: 210.0, edge: fall }
+
+sync:
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: true
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  Mercedes 2-segment distributor trigger
+  Two 30-degree segments per revolution

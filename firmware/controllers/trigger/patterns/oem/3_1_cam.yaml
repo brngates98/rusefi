@@ -1,0 +1,33 @@
+name: "3-1 Cam Pattern"
+id: TT_3_1_CAM
+operation_mode: FOUR_STROKE_CAM_SENSOR
+sync_edge: RiseOnly
+
+channels:
+  primary:
+    type: custom
+    events:
+      - { angle: 0.0, edge: rise }
+      - { angle: 60.0, edge: fall }
+      - { angle: 180.0, edge: rise }
+      - { angle: 240.0, edge: fall }
+      - { angle: 360.0, edge: rise }
+      - { angle: 420.0, edge: fall }
+      # Missing tooth gap
+      - { angle: 540.0, edge: rise }
+      - { angle: 600.0, edge: fall }
+
+sync:
+  gaps:
+    - { index: 0, from: 1.5, to: 3.0 }
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: false
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  3-1 cam sensor pattern
+  Three teeth followed by one tooth after a gap
