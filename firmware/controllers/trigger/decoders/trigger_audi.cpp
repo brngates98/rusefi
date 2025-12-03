@@ -54,12 +54,12 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 	// Set TDC position - the angle from trigger event #0 to actual engine TDC
 	s->tdcPosition = tdcAfterTrigger;
 
-	// We need cam synchronization for full cycle determination
-	s->needSecondTriggerInput = true;
-	s->isSecondWheelCam = true;
-	
-	// Synchronization is needed to find position within the cycle
-	s->isSynchronizationNeeded = true;
+	// With uniform teeth (no missing teeth), the trigger doesn't provide exact TDC location
+	// The TDC position is calculated from the trigger events
+	s->shapeWithoutTdc = true;
+	s->isSynchronizationNeeded = false;
+	s->needSecondTriggerInput = false;
+	s->isSecondWheelCam = false;
 
 	// Add virtual teeth around the full engine cycle
 	// Each tooth is a rise/fall pair
