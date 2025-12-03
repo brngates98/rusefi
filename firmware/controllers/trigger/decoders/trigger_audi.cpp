@@ -51,29 +51,34 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 	float toothSpacing = engineCycle / virtualTeethCount;
 	
 	// The sync point is at 134° BTDC #5 when cam is HIGH
-	// This corresponds to 360° + (180° - 134°) = 406° after TDC #1
-	// We'll set TDC position relative to first tooth
-	s->tdcPosition = 406;
+	// Firing order for Audi 5-cyl: 1-2-4-5-3 (144° between cylinders)
+	// TDC positions: #1=0°, #2=144°, #4=288°, #5=432°, #3=576°
+	// Sync at 134° BTDC #5 = 432° - 134° = 298° after TDC #1
+	// However, the first tooth is at 0°, so we need to adjust
+	// Set tdcPosition to align with TDC of cylinder #1
+	s->tdcPosition = 0;
 	
 	// Generate 90 virtual teeth
 	for (int i = 0; i < virtualTeethCount; i++) {
 		float angle = i * toothSpacing;
 		
-		// Add rising edge (tooth start)
-		s->addEvent720(angle + toothSpacing * (1 - toothWidth), TriggerValue::RISE);
+		// Add rising edge (tooth start) - at the beginning of each tooth window
+		s->addEvent720(angle, TriggerValue::RISE);
 		
-		// Add falling edge (tooth end)
-		s->addEvent720(angle + toothSpacing, TriggerValue::FALL);
+		// Add falling edge (tooth end) - 50% duty cycle
+		s->addEvent720(angle + toothSpacing * toothWidth, TriggerValue::FALL);
 	}
 	
 	// Add cam sync pulse on secondary channel
-	// Cam is HIGH from approximately 270° to 630° (when sync is valid)
-	// The crank home pulse at 406° will be gated by this HIGH cam signal
-	s->addEvent720(270, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
-	s->addEvent720(630, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	// The cam signal creates one pulse per 720° cycle
+	// Cam is HIGH when crank home pulse should be recognized (at #5 TDC region)
+	// Cam is LOW when crank home pulse should be ignored (at #1 TDC region)
+	// Let's use a symmetric pattern: HIGH for 360°, LOW for 360°
+	s->addEvent720(0, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent720(360, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 	
 	// Configure synchronization gap detection
 	// With 90 evenly spaced teeth, we rely on the cam pulse for sync
-	// Set a small gap tolerance to detect regular tooth spacing
-	s->setTriggerSynchronizationGap(1.5);
+	// Set a tight gap tolerance since all teeth are evenly spaced
+	s->setTriggerSynchronizationGap(1.2);
 }
