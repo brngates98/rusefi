@@ -361,6 +361,21 @@ float getConfigValueByHash(const int hash) {
 // trigger.customSkippedToothCount
 		case 387956265:
 			return engineConfiguration->trigger.customSkippedToothCount;
+// trigger.audiTriggerDivider
+		case 1623509989:
+			return engineConfiguration->trigger.audiTriggerDivider;
+// trigger.audiActualTeeth
+		case 449841118:
+			return engineConfiguration->trigger.audiActualTeeth;
+// trigger.audiFirstTriggerTooth
+		case -2146123116:
+			return engineConfiguration->trigger.audiFirstTriggerTooth;
+// trigger.audiTdcAfterTrigger
+		case 937693579:
+			return engineConfiguration->trigger.audiTdcAfterTrigger;
+// trigger.audiToothAngularWidth
+		case 1929170594:
+			return engineConfiguration->trigger.audiToothAngularWidth;
 // airByRpmTaper
 		case 2070727975:
 			return engineConfiguration->airByRpmTaper;
@@ -2041,6 +2056,9 @@ float getConfigValueByHash(const int hash) {
 // dynoCarFrontalAreaM2
 		case -1661556925:
 			return config->dynoCarFrontalAreaM2;
+// technicalDebt7738
+		case 218340072:
+			return config->technicalDebt7738;
 	}
 	return EFI_ERROR_CODE;
 }
@@ -2644,6 +2662,31 @@ bool setConfigValueByName(const char *name, float value) {
 		case 387956265:
 	{
 		engineConfiguration->trigger.customSkippedToothCount = (int)value;
+		return 1;
+	}
+		case 1623509989:
+	{
+		engineConfiguration->trigger.audiTriggerDivider = (int)value;
+		return 1;
+	}
+		case 449841118:
+	{
+		engineConfiguration->trigger.audiActualTeeth = (int)value;
+		return 1;
+	}
+		case -2146123116:
+	{
+		engineConfiguration->trigger.audiFirstTriggerTooth = (int)value;
+		return 1;
+	}
+		case 937693579:
+	{
+		engineConfiguration->trigger.audiTdcAfterTrigger = value;
+		return 1;
+	}
+		case 1929170594:
+	{
+		engineConfiguration->trigger.audiToothAngularWidth = value;
 		return 1;
 	}
 		case 2070727975:
@@ -5444,6 +5487,11 @@ bool setConfigValueByName(const char *name, float value) {
 		case -1661556925:
 	{
 		config->dynoCarFrontalAreaM2 = value;
+		return 1;
+	}
+		case 218340072:
+	{
+		config->technicalDebt7738 = (int)value;
 		return 1;
 	}
 	}

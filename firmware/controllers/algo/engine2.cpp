@@ -301,7 +301,16 @@ bool PrimaryTriggerConfiguration::isVerboseTriggerSynchDetails() const {
 
 trigger_config_s VvtTriggerConfiguration::getType() const {
 	// Convert from VVT type to trigger_config_s
-	return { getVvtTriggerType(engineConfiguration->vvtMode[index]), 0, 0 };
+	trigger_config_s config = {};
+	config.type = getVvtTriggerType(engineConfiguration->vvtMode[index]);
+	config.customTotalToothCount = 0;
+	config.customSkippedToothCount = 0;
+	config.audiTriggerDivider = 0;
+	config.audiActualTeeth = 0;
+	config.audiFirstTriggerTooth = 0;
+	config.audiTdcAfterTrigger = 0.0f;
+	config.audiToothAngularWidth = 0.0f;
+	return config;
 }
 
 bool VvtTriggerConfiguration::isVerboseTriggerSynchDetails() const {

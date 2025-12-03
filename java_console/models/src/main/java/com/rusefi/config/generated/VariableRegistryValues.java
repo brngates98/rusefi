@@ -432,7 +432,7 @@ public class VariableRegistryValues {
 	public static final int ego_sensor_e_ES_PLX = 4;
 	public static final String egoSettings_NAME = "CAN O2 sensors";
 	public static final int EGT_CHANNEL_COUNT = 8;
-	public static final int engine_configuration_s_size = 3972;
+	public static final int engine_configuration_s_size = 3984;
 	public static final int engine_load_mode_e_LM_ALPHA_N = 2;
 	public static final int engine_load_mode_e_LM_LUA = 3;
 	public static final int engine_load_mode_e_LM_REAL_MAF = 1;
@@ -1245,8 +1245,8 @@ public class VariableRegistryValues {
 	public static final String INDICATOR_NAME_BRAKE_DOWN = "Brake switch";
 	public static final String INDICATOR_NAME_CLUTCH_DOWN = "Clutch: down";
 	public static final String INDICATOR_NAME_CLUTCH_UP = "Clutch: up";
-	public static final int INJ_PHASE_LOAD_COUNT = 16;
-	public static final int INJ_PHASE_RPM_COUNT = 16;
+	public static final int INJ_PHASE_LOAD_COUNT = 6;
+	public static final int INJ_PHASE_RPM_COUNT = 6;
 	public static final int INJ_STAGING_COUNT = 6;
 	public static final int INJ_STAGING_RPM_SIZE = 6;
 	public static final int injection_mode_e_IM_BATCH = 2;
@@ -1306,8 +1306,8 @@ public class VariableRegistryValues {
 	public static final int MAF_DECODING_COUNT = 32;
 	public static final String MAIN_HELP_URL = "http://www.rusefi.com/";
 	public static final int MAP_ANGLE_SIZE = 8;
-	public static final int MAP_EST_LOAD_COUNT = 16;
-	public static final int MAP_EST_RPM_COUNT = 16;
+	public static final int MAP_EST_LOAD_COUNT = 6;
+	public static final int MAP_EST_RPM_COUNT = 6;
 	public static final int MAP_sensor_config_s_size = 140;
 	public static final int MAP_UPPER_LIMIT = 650;
 	public static final int MAP_WINDOW_SIZE = 8;
@@ -1366,7 +1366,7 @@ public class VariableRegistryValues {
 	public static final int PEDAL_TO_TPS_SIZE = 8;
 	public static final String pedalSensor_NAME = "Accelerator pedal";
 	public static final String pedalToTpsTbl_NAME = "ETB pedal target";
-	public static final int persistent_config_s_size = 23816;
+	public static final int persistent_config_s_size = 22872;
 	public static final int pid_s_size = 20;
 	public static final int pin_input_mode_e_PI_DEFAULT = 0;
 	public static final int pin_input_mode_e_PI_INVERTED_DEFAULT = 4;
@@ -1434,6 +1434,7 @@ public class VariableRegistryValues {
 	public static final int SentInput_INPUT6 = 6;
 	public static final int SentInput_INPUT7 = 7;
 	public static final int SentInput_NONE = 0;
+	public static final int SIGNATURE_HASH = 1376954383;
 	public static final String SIMULATOR_TUNE_BIN_FILE_NAME = "generated/simulator_tune_image.bin";
 	public static final String SIMULATOR_TUNE_BIN_FILE_NAME_PREFIX = "generated/simulator_tune_image";
 	public static final String SIMULATOR_TUNE_BIN_FILE_NAME_SUFFIX = ".bin";
@@ -1501,7 +1502,7 @@ public class VariableRegistryValues {
 	public static final int torqueReductionActivationMode_e_TORQUE_REDUCTION_BUTTON = 0;
 	public static final int torqueReductionActivationMode_e_TORQUE_REDUCTION_CLUTCH_DOWN_SWITCH = 2;
 	public static final int torqueReductionActivationMode_e_TORQUE_REDUCTION_CLUTCH_UP_SWITCH = 3;
-	public static final int TOTAL_CONFIG_SIZE = 23816;
+	public static final int TOTAL_CONFIG_SIZE = 22872;
 	public static final int TPS_2_BYTE_PACKING_MULT = 100;
 	public static final int TPS_PPS_TOO_HIGH_THRESHOLD = 110;
 	public static final int TPS_PPS_TOO_LOW_THRESHOLD = -10;
@@ -1516,7 +1517,7 @@ public class VariableRegistryValues {
 	public static final int TransmissionControllerMode_None = 0;
 	public static final int TransmissionControllerMode_SimpleTransmissionController = 1;
 	public static final String TRIGGER_COMMENT = "#";
-	public static final int trigger_config_s_size = 12;
+	public static final int trigger_config_s_size = 24;
 	public static final String TRIGGER_CYCLE_DURATION = "cycleDuration";
 	public static final String TRIGGER_GAP_FROM = "gapFrom";
 	public static final String TRIGGER_GAP_TO = "gapTo";
@@ -1540,6 +1541,7 @@ public class VariableRegistryValues {
 	public static final int trigger_type_e_TT_60DEG_TOOTH = 77;
 	public static final int trigger_type_e_TT_6_TOOTH_CRANK = 80;
 	public static final int trigger_type_e_TT_ARCTIC_CAT = 85;
+	public static final int trigger_type_e_TT_AUDI_DIVBYN = 95;
 	public static final int trigger_type_e_TT_BENELLI_TRE = 21;
 	public static final int trigger_type_e_TT_CHRYSLER_NGC_36_2_2 = 30;
 	public static final int trigger_type_e_TT_CHRYSLER_PHASER = 90;
@@ -1609,7 +1611,7 @@ public class VariableRegistryValues {
 	public static final int trigger_type_e_TT_TOOTHED_WHEEL_60_2 = 8;
 	public static final int trigger_type_e_TT_TOYOTA_3_TOOTH_UZ = 91;
 	public static final int trigger_type_e_TT_TRI_TACH = 53;
-	public static final int trigger_type_e_TT_UNUSED = 95;
+	public static final int trigger_type_e_TT_UNUSED = 96;
 	public static final int trigger_type_e_TT_UNUSED29 = 29;
 	public static final int trigger_type_e_TT_VVT_BARRA_3_PLUS_1 = 56;
 	public static final int trigger_type_e_TT_VVT_BOSCH_QUICK_START = 47;
@@ -1740,7 +1742,7 @@ public class VariableRegistryValues {
 	public static final int TS_RESPONSE_UNRECOGNIZED_COMMAND = 0x83;
 	public static final int TS_SCATTER_OFFSETS_COUNT = 128;
 	public static final char TS_SET_LOGGER_SWITCH = 'l';
-	public static final String TS_SIGNATURE = "rusEFI master.2025.12.02.stm32h743_nucleo.2576393965";
+	public static final String TS_SIGNATURE = "rusEFI copilot/add-audi-trigger-divbyn.2025.12.03.f407-discovery.1376954383";
 	public static final char TS_SIMULATE_CAN = '>';
 	public static final char TS_TEST_COMMAND = 't';
 	public static final int TS_TOTAL_OUTPUT_SIZE = 2076;

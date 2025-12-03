@@ -63,9 +63,27 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 
 	// Add virtual teeth around the full engine cycle
 	// Each tooth is a rise/fall pair
+	// The tooth width should be less than tooth spacing to avoid overlap
+	float effectiveToothWidth = toothAngularWidth;
+	if (effectiveToothWidth >= toothSpacing) {
+		// If tooth width would cause overlap, reduce it
+		effectiveToothWidth = toothSpacing * 0.5f;  // 50% duty cycle
+	}
+	
+	// Note: angles must be > 0 and <= engineCycle
 	for (int i = 0; i < virtualTeeth; i++) {
-		float toothStart = i * toothSpacing;
-		float toothEnd = toothStart + toothAngularWidth;
+		float toothStart = i * toothSpacing + 0.01f;  // Small offset to avoid zero
+		float toothEnd = toothStart + effectiveToothWidth;
+		
+		// Special handling for the last tooth - must end exactly at engineCycle
+		if (i == virtualTeeth - 1) {
+			toothEnd = engineCycle;
+		}
+		
+		// Ensure angles are within valid range (0, 720]
+		if (toothEnd > engineCycle) {
+			toothEnd = engineCycle;
+		}
 		
 		// Add rise and fall events for this tooth
 		s->addEvent720(toothStart, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
