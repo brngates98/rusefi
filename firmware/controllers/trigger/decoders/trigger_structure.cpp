@@ -38,6 +38,7 @@
 #include "trigger_vw.h"
 #include "trigger_universal.h"
 #include "trigger_mercedes.h"
+#include "trigger_audi.h"
 #include "engine_state.h"
 
 void wrapAngle(angle_t& angle, const char* msg, ObdCode code) {
@@ -723,7 +724,10 @@ void TriggerWaveform::initializeTriggerWaveform(operation_mode_e triggerOperatio
 	    initializeMitsubishi4g63Cam(this);
 		break;
 
-	case trigger_type_e::TT_UNUSED29:
+	case trigger_type_e::TT_AUDI_DIVBYN:
+		initializeAudiDivbyN(this);
+		break;
+
 	case trigger_type_e::TT_HONDA_CBR_600:
 		configureHondaCbr600(this);
 		break;
