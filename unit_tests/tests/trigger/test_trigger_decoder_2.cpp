@@ -344,3 +344,46 @@ TEST(TriggerDecoder, PrimaryDecoderNeedsDisambiguation) {
 	dut.onTriggerError();
 	EXPECT_FALSE(dut.hasSynchronizedPhase());
 }
+
+TEST(TriggerDecoder, TriTachHomeSensorSync) {
+	MockTriggerConfiguration cfg({trigger_type_e::TT_TRI_TACH, 0, 0});
+	cfg.update();
+	engineConfiguration = nullptr;
+
+	auto shape = makeTriggerShape(FOUR_STROKE_CRANK_SENSOR, cfg);
+
+	// Verify the trigger is configured correctly
+	EXPECT_TRUE(shape.useHomeForSync);
+	EXPECT_FALSE(shape.isSynchronizationNeeded);
+	EXPECT_TRUE(shape.shapeWithoutTdc);
+	EXPECT_TRUE(shape.needSecondTriggerInput);
+	EXPECT_EQ(3, shape.toothDivider);
+
+	efitick_t t = 0;
+
+	PrimaryTriggerDecoder dut("test");
+	dut.setNeedsDisambiguation(shape.needsDisambiguation());
+
+	// Fire some primary teeth - should not sync yet
+	t += MS2NT(1);
+	doTooth(dut, shape, cfg, t);
+	EXPECT_FALSE(dut.getShaftSynchronized());
+
+	t += MS2NT(1);
+	doTooth(dut, shape, cfg, t);
+	EXPECT_FALSE(dut.getShaftSynchronized());
+
+	// Fire secondary channel (home sensor) rising edge - should sync!
+	t += MS2NT(1);
+	dut.decodeTriggerEvent("", shape, nullptr, cfg, SHAFT_SECONDARY_RISING, t);
+	EXPECT_TRUE(dut.getShaftSynchronized());
+
+	// But we don't have phase sync yet (needs cam)
+	EXPECT_FALSE(dut.hasSynchronizedPhase());
+
+	// Provide cam phase information
+	dut.syncEnginePhase(2, 0, 720);
+
+	// Now we have full 720° sync!
+	EXPECT_TRUE(dut.hasSynchronizedPhase());
+}
