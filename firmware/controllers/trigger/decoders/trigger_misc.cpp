@@ -251,7 +251,8 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 	int virtualTeeth = (actualTeeth * 2) / divider;
 
 	// Validate parameters
-	if (actualTeeth < 2 || virtualTeeth < 2) {
+	constexpr int minTeethCount = 2;
+	if (actualTeeth < minTeethCount || virtualTeeth < minTeethCount) {
 		s->setShapeDefinitionError(true);
 		return;
 	}

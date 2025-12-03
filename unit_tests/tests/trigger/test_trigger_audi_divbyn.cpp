@@ -2,7 +2,7 @@
  * @file test_trigger_audi_divbyn.cpp
  *
  * @date Dec 3, 2024
- * @author Audi DivbyN trigger test
+ * @author Copilot
  */
 
 #include "pch.h"
