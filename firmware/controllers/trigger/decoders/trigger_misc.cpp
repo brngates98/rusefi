@@ -222,3 +222,79 @@ void configureArcticCat(TriggerWaveform *s) {
 
 
 }
+
+// TT_AUDI_DIVBYN
+void initializeAudiDivbyN(TriggerWaveform *s) {
+	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+
+	// Get configuration values with defaults
+	int actualTeeth = engineConfiguration->audiActualTeeth;
+	int divider = engineConfiguration->audiTriggerDivider;
+	angle_t tdcAfterTrigger = engineConfiguration->audiTdcAfterTrigger;
+	angle_t crankPinBTDC = engineConfiguration->audiCrankPinBTDC;
+
+	// Apply defaults if not configured
+	if (actualTeeth == 0) {
+		actualTeeth = 135;
+	}
+	if (divider == 0) {
+		divider = 3;
+	}
+	if (tdcAfterTrigger == 0) {
+		tdcAfterTrigger = 58;
+	}
+	if (crankPinBTDC == 0) {
+		crankPinBTDC = 58;
+	}
+
+	// Calculate virtual teeth count
+	int virtualTeeth = (actualTeeth * 2) / divider;
+
+	// Validate parameters
+	if (divider <= 0 || actualTeeth < 2 || virtualTeeth < 2) {
+		s->setShapeDefinitionError(true);
+		return;
+	}
+
+	// Set trigger configuration flags
+	s->isSynchronizationNeeded = true;
+	s->needSecondTriggerInput = true;
+	s->isSecondWheelCam = false;  // Secondary is crank-home VR, not cam
+	s->useOnlyPrimaryForSync = false;
+	s->tdcPosition = tdcAfterTrigger;
+
+	// Calculate tooth spacing for virtual teeth evenly distributed over 720 degrees
+	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	float toothAngle = engineCycle / virtualTeeth;
+	float toothWidth = 0.5; // 50% duty cycle
+
+	// Add primary channel virtual teeth events
+	for (int i = 0; i < virtualTeeth; i++) {
+		float riseAngle = i * toothAngle;
+		float fallAngle = riseAngle + (toothAngle * toothWidth);
+		
+		s->addEventClamped(riseAngle, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+		s->addEventClamped(fallAngle, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	}
+
+	// Add secondary channel crank-home pulses
+	// Two pulses per 720 degrees (one per revolution)
+	// First pulse at (720 - crankPinBTDC) normalized, second at +360 degrees
+	float pulseWidth = 2.0; // 2 degree pulse width
+	
+	// First crank-home pulse
+	float firstPulseAngle = engineCycle - crankPinBTDC;
+	if (firstPulseAngle < 0) {
+		firstPulseAngle += engineCycle;
+	}
+	s->addEvent720(firstPulseAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent720(firstPulseAngle + pulseWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+
+	// Second crank-home pulse (360 degrees later)
+	float secondPulseAngle = firstPulseAngle + 360.0;
+	if (secondPulseAngle >= engineCycle) {
+		secondPulseAngle -= engineCycle;
+	}
+	s->addEvent720(secondPulseAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent720(secondPulseAngle + pulseWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+}
