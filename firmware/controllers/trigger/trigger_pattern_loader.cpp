@@ -44,13 +44,28 @@ void initializeFromPattern(TriggerWaveform* waveform, const TriggerPatternData* 
 			if (pattern->events && pattern->eventCount > 0) {
 				for (uint16_t i = 0; i < pattern->eventCount; i++) {
 					const ToothSpec& event = pattern->events[i];
-					TriggerWheel wheel = (event.channel == TriggerChannel::CRANK) ? 
-					                     TriggerWheel::T_PRIMARY : TriggerWheel::T_SECONDARY;
+					TriggerWheel wheel;
+					
+					// Map channel to wheel correctly
+					switch (event.channel) {
+						case TriggerChannel::CRANK:
+							wheel = TriggerWheel::T_PRIMARY;
+							break;
+						case TriggerChannel::CAM_SYNC:
+							wheel = TriggerWheel::T_SECONDARY;
+							break;
+						case TriggerChannel::HOME:
+							wheel = TriggerWheel::T_TERTIARY;
+							break;
+						default:
+							wheel = TriggerWheel::T_PRIMARY;
+							break;
+					}
 					
 					if (event.edge == EdgeType::RISE) {
-						waveform->addEvent(event.angle, wheel, TriggerValue::RISE);
+						waveform->addEvent(event.angle, TriggerValue::RISE, wheel);
 					} else {
-						waveform->addEvent(event.angle, wheel, TriggerValue::FALL);
+						waveform->addEvent(event.angle, TriggerValue::FALL, wheel);
 					}
 				}
 			}
@@ -69,6 +84,7 @@ void initializeFromPattern(TriggerWaveform* waveform, const TriggerPatternData* 
 	// Set metadata
 	waveform->tdcPosition = pattern->tdcPosition;
 	waveform->needSecondTriggerInput = pattern->hasSecondChannel;
+	waveform->needsThirdTriggerInput = pattern->hasThirdChannel;
 	waveform->useOnlyPrimaryForSync = pattern->useOnlyPrimaryForSync;
 	
 #if EFI_UNIT_TEST

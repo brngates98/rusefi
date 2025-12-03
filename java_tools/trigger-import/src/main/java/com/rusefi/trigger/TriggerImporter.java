@@ -59,18 +59,33 @@ public class TriggerImporter {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "--input":
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("--input requires a value");
+                    }
                     config.inputFile = args[++i];
                     break;
                 case "--format":
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("--format requires a value");
+                    }
                     config.format = args[++i].toLowerCase();
                     break;
                 case "--output":
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("--output requires a value");
+                    }
                     config.outputFile = args[++i];
                     break;
                 case "--name":
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("--name requires a value");
+                    }
                     config.patternName = args[++i];
                     break;
                 case "--channels":
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("--channels requires a value");
+                    }
                     config.channels = Arrays.asList(args[++i].split(","));
                     break;
             }
