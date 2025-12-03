@@ -222,3 +222,43 @@ void configureArcticCat(TriggerWaveform *s) {
 
 
 }
+
+// TT_AUDI_DIVBYN - Audi 5-cylinder with DivbyN calculation
+// Supports 135-tooth (5-cyl) and 136-tooth (V8/even cylinder) flywheels
+void initializeAudiDivbyN(TriggerWaveform *s) {
+    s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+    
+    // Get configurable parameters from engineConfiguration
+    int actualTeeth = engineConfiguration->audiActualTeeth;      // default 135
+    int divider = engineConfiguration->audiTriggerDivider;        // default 3
+    
+    // Validate parameters
+    if (actualTeeth < 1) actualTeeth = 135;
+    if (divider < 1) divider = 3;
+    
+    // Calculate virtual teeth: (135 * 2) / 3 = 90 per engine cycle
+    int virtualTeeth = (actualTeeth * 2) / divider;
+    
+    float engineCycle = FOUR_STROKE_ENGINE_CYCLE;  // 720 degrees
+    float toothWidth = 0.5f;  // 50% duty cycle
+    
+    // Add virtual tooth events evenly spaced across engine cycle
+    for (int i = 0; i < virtualTeeth; i++) {
+        float toothAngle = engineCycle / virtualTeeth;
+        float angleStart = toothAngle * i;
+        float angleEnd = angleStart + (toothAngle * toothWidth);
+        
+        s->addEvent720(angleStart + 0.1f, TriggerValue::RISE);
+        s->addEvent720(angleEnd, TriggerValue::FALL);
+    }
+    
+    // Synchronization needed - cam signal provides 720° disambiguation
+    s->isSynchronizationNeeded = true;
+    s->useOnlyPrimaryForSync = true;
+    
+    // TDC position from configuration (default 58° after trigger reference)
+    s->tdcPosition = engineConfiguration->audiTdcAfterTrigger;
+    
+    // Set sync gap ratios for the virtual tooth pattern
+    s->setTriggerSynchronizationGap(1.0f);
+}
