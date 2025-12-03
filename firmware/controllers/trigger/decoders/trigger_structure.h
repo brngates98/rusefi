@@ -75,6 +75,11 @@ public:
 	 */
 	bool needSecondTriggerInput = false;
 	/**
+	 * this flag tells us if we should process events on third input channel (T_TERTIARY/HOME)
+	 * Used for multi-tooth + home patterns like 135 teeth + home + cam
+	 */
+	bool needsThirdTriggerInput = false;
+	/**
 	 * true value here means that we do not have a valid trigger configuration
 	 */
 	bool shapeDefinitionError = false;

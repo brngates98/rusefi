@@ -1,0 +1,40 @@
+name: "GM 7X"
+id: TT_GM_7X
+operation_mode: FOUR_STROKE_CRANK_SENSOR
+sync_edge: Rise
+
+channels:
+  primary:
+    type: custom
+    events:
+      # Six evenly spaced teeth
+      - { angle: 0.0, edge: rise }
+      - { angle: 10.0, edge: fall }
+      - { angle: 60.0, edge: rise }
+      - { angle: 70.0, edge: fall }
+      - { angle: 120.0, edge: rise }
+      - { angle: 130.0, edge: fall }
+      - { angle: 180.0, edge: rise }
+      - { angle: 190.0, edge: fall }
+      - { angle: 240.0, edge: rise }
+      - { angle: 250.0, edge: fall }
+      - { angle: 300.0, edge: rise }
+      - { angle: 310.0, edge: fall }
+      # Seventh tooth offset
+      - { angle: 320.0, edge: rise }
+      - { angle: 330.0, edge: fall }
+
+sync:
+  gaps:
+    - { index: 0, from: 0.5, to: 1.5 }
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: true
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  GM 7X trigger pattern
+  Six evenly spaced teeth plus one offset tooth

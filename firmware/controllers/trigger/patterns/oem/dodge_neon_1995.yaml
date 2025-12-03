@@ -1,0 +1,26 @@
+name: "Dodge Neon 1995"
+id: TT_DODGE_NEON_1995
+operation_mode: FOUR_STROKE_CRANK_SENSOR
+sync_edge: RiseOnly
+
+channels:
+  primary:
+    type: skipped_tooth
+    total_teeth: 36
+    missing_teeth: 2
+    missing_at: [18, 19]
+
+sync:
+  gaps:
+    - { index: 0, from: 1.6, to: 3.5 }
+  use_only_primary: true
+
+metadata:
+  tdc_position: 90.0
+  is_crank_based: true
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  Dodge Neon 1995-1999
+  36-2 crankshaft trigger

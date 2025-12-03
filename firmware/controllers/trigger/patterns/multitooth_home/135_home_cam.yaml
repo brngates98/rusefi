@@ -1,0 +1,35 @@
+name: "135 Tooth + Home + Cam"
+id: TT_135_HOME_CAM
+operation_mode: FOUR_STROKE_CRANK_SENSOR
+sync_edge: RiseOnly
+
+channels:
+  primary:
+    type: multitooth
+    total_teeth: 135
+  
+  tertiary:
+    type: single_pulse
+    angle: 0.0
+    width: 2.67  # 360/135 degrees
+  
+  secondary:
+    type: cam_sync
+    angle: 90.0
+    width: 10.0
+
+sync:
+  use_only_primary: false
+  
+metadata:
+  tdc_position: 0.0
+  is_crank_based: true
+  has_second_channel: true
+  has_third_channel: true
+  known_operation_mode: true
+
+notes: |
+  Reference implementation for multi-tooth + home + cam pattern.
+  135 evenly spaced teeth on crankshaft (2.67° apart).
+  Home pulse on tertiary input for index/synchronization.
+  Cam pulse on secondary input for phase detection.

@@ -1,0 +1,21 @@
+name: "36-1 Toothed Wheel"
+id: TT_TOOTHED_WHEEL_36_1
+operation_mode: FOUR_STROKE_CRANK_SENSOR
+sync_edge: RiseOnly
+
+channels:
+  primary:
+    type: skipped_tooth
+    total_teeth: 36
+    missing_teeth: 1
+
+sync:
+  gaps:
+    - { index: 0, from: 1.5, to: 3.0 }
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: true
+  has_second_channel: false
+  known_operation_mode: true

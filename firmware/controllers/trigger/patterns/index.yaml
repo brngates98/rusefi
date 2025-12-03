@@ -1,0 +1,141 @@
+# Trigger Pattern Index
+# This file lists all available trigger patterns in the system
+
+version: 1.0
+
+categories:
+  skipped_tooth:
+    description: "Standard N-M skipped tooth patterns"
+    patterns:
+      - 60_2.yaml
+      - 36_1.yaml
+      - 36_2.yaml
+      - 32_2.yaml
+      - 60_2_wrong_polarity.yaml
+      - custom.yaml
+  
+  multitooth_home:
+    description: "Multi-tooth patterns with home/index pulse"
+    patterns:
+      - 135_home_cam.yaml
+  
+  oem:
+    description: "OEM-specific trigger patterns"
+    patterns:
+      # Chrysler
+      - dodge_neon_1995.yaml
+      - dodge_neon_2003_cam.yaml
+      - dodge_stratus.yaml
+      - dodge_ram.yaml
+      - jeep_4_cyl.yaml
+      - jeep_18_2_2_2.yaml
+      - chrysler_ngc_36_2_2.yaml
+      - jeep_evd_36_2_2.yaml
+      - chrysler_phaser.yaml
+      
+      # Ford
+      - ford_aspire.yaml
+      - ford_tfi_pip.yaml
+      - ford_st170.yaml
+      - ford_coyote_vvt.yaml
+      
+      # GM
+      - gm_7x.yaml
+      - gm_60_2_2_2.yaml
+      - gm_24x_5.yaml
+      - gm_24x_3.yaml
+      
+      # Honda
+      - honda_k_12_1.yaml
+      - honda_k_cam_4_1.yaml
+      - honda_cbr_600.yaml
+      - honda_j30a2.yaml
+      
+      # Mazda
+      - mazda_miata_na.yaml
+      - mazda_miata_vvt_test.yaml
+      - miata_vvt.yaml
+      - miata_nb_vvt.yaml
+      - mazda_dohc_1_4.yaml
+      - mazda_sohc_4.yaml
+      - mazda_skyactiv_vvt.yaml
+      - mazda_l_cam.yaml
+      
+      # Mitsubishi
+      - mitsu_4g63_cam.yaml
+      - mitsu_4g63_crank.yaml
+      - mitsu_4g69_vvt.yaml
+      - mitsu_3a92_vvt.yaml
+      - mitsu_6g72_vvt.yaml
+      - 36_2_1_1.yaml
+      - 36_2_1.yaml
+      
+      # Nissan
+      - nissan_qr25.yaml
+      - nissan_vq30.yaml
+      - nissan_vq35.yaml
+      - nissan_vq35_vvt.yaml
+      - nissan_mr18_crank.yaml
+      - nissan_mr18_vvt.yaml
+      - nissan_sr20ve.yaml
+      - nissan_hr.yaml
+      - nissan_hr_cam_in.yaml
+      
+      # Subaru
+      - subaru_7_6.yaml
+      - subaru_7_6_crank.yaml
+      - subaru_svx.yaml
+      - subaru_svx_crank_1.yaml
+      - subaru_svx_cam_vvt.yaml
+      - subaru_ez30.yaml
+      - 36_2_2_2.yaml
+      - subaru_7_without_6.yaml
+      
+      # Suzuki
+      - suzuki_g13b.yaml
+      - suzuki_k6a.yaml
+      
+      # Toyota
+      - toyota_2jz_3_34.yaml
+      - toyota_3_tooth_vvt.yaml
+      - toyota_4_1_vvt.yaml
+      - toyota_uz_cam.yaml
+      
+      # Universal/Common
+      - one_plus_one.yaml
+      - 3_1_cam.yaml
+      - half_moon.yaml
+      - narrow_single_tooth.yaml
+      - 60deg_tooth.yaml
+      - bosch_quick_start.yaml
+      - barra_3_plus_1.yaml
+      - 3_tooth_crank.yaml
+      - 6_tooth_crank.yaml
+      - 12_tooth_crank.yaml
+      - renault_f3r.yaml
+      
+      # Misc
+      - mercedes_2_segment.yaml
+      - daihatsu_3_cyl.yaml
+      - daihatsu_4_cyl.yaml
+      - benelli_tre.yaml
+      - arctic_cat.yaml
+      - fiat_iaw_p8.yaml
+      - tri_tach.yaml
+      - skoda_favorit.yaml
+      - kawa_kx450f.yaml
+      - renix_66_2_2_2.yaml
+      - renix_44_2_2.yaml
+      - dev.yaml
+      
+      # Rover
+      - rover_k.yaml
+  
+  custom:
+    description: "Custom user-defined patterns"
+    patterns: []
+
+notes: |
+  This index is used by the build system to compile all trigger patterns
+  from YAML to C++ at build time. Each pattern file should follow the
+  standard YAML format defined in the documentation.
