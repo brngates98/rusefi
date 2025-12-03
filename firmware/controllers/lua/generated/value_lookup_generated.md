@@ -355,6 +355,24 @@ CANbus thread period in ms
 ### trigger.customSkippedToothCount
 
 
+### trigger.audiTriggerDivider
+The divider "N" in DivbyN calculation for Audi trigger
+
+### trigger.audiActualTeeth
+Actual physical teeth on crank wheel for Audi trigger
+
+### trigger.audiFirstTriggerTooth
+First trigger tooth position for Audi trigger
+
+### trigger.audiTdcAfterTrigger
+TDC offset after trigger reference for Audi trigger
+
+### trigger.audiToothAngularWidth
+Angular width of each tooth for Audi trigger
+
+### trigger.audiCrankPinBTDC
+Crank home pin position BTDC #1 for Audi trigger
+
 ### airByRpmTaper
 Extra air taper amount
 

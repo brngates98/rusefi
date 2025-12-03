@@ -738,10 +738,10 @@ custom trigger_type_e 4 bits, U32, @OFFSET@, [0:6], @@trigger_type_e_enum@@
 	trigger_type_e type;https://wiki.rusefi.com/All-Supported-Triggers
 	int customTotalToothCount;;"number", 1, 0, 1, 300, 0
 	int customSkippedToothCount;;"number", 1, 0, 0, 300, 0
-	uint8_t[4] autoscale audiTriggerDivider;The divider "N" in DivbyN calculation for Audi trigger;;"", 1, 0, 0, 255, 0
+	uint8_t audiTriggerDivider;The divider "N" in DivbyN calculation for Audi trigger;;"", 1, 0, 0, 255, 0
 	uint8_t audiActualTeeth;Actual physical teeth on crank wheel for Audi trigger;;"teeth", 1, 0, 0, 255, 0
 	uint8_t audiFirstTriggerTooth;First trigger tooth position for Audi trigger;;"tooth", 1, 0, 0, 255, 0
-	uint8_t[1] autoscale audiUnused;
+	uint8_t[5] unused;
 	float audiTdcAfterTrigger;TDC offset after trigger reference for Audi trigger;;"deg", 1, 0, 0, 360, 1
 	float audiToothAngularWidth;Angular width of each tooth for Audi trigger;;"deg", 1, 0, 0, 360, 1
 	float audiCrankPinBTDC;Crank home pin position BTDC #1 for Audi trigger;;"deg", 1, 0, 0, 360, 1
