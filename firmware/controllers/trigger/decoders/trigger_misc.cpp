@@ -222,3 +222,63 @@ void configureArcticCat(TriggerWaveform *s) {
 
 
 }
+
+// TT_AUDI_DIVBYN
+void initializeAudiDivbyN(TriggerWaveform *s) {
+	// Default configuration values
+	int actualTeeth = 135;  // Default: 135-tooth Audi wheel
+	int divider = 3;        // Default: divide by 3
+	float tdcAfterTrigger = 58; // Default TDC position after trigger (degrees)
+	
+	// Calculate virtual teeth: (actualTeeth * 2) / divider
+	int virtualTeeth = (actualTeeth * 2) / divider;
+	
+	// Validate: virtualTeeth must be >= 2
+	if (virtualTeeth < 2) {
+		virtualTeeth = 2;
+	}
+	
+	// Initialize as a crank sensor with rise-only sync
+	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
+	
+	// Set flags
+	s->isSynchronizationNeeded = true;
+	s->needSecondTriggerInput = true;
+	s->isSecondWheelCam = true;
+	s->useOnlyPrimaryForSync = false;
+	s->tdcPosition = tdcAfterTrigger;
+	
+	// Primary channel: evenly spaced virtual teeth across 720°
+	float toothAngleWidth = 720.0f / virtualTeeth;
+	float toothWidth = 1.0f; // Narrow pulse width in degrees
+	
+	for (int i = 0; i < virtualTeeth; i++) {
+		float toothCenter = toothAngleWidth * i;
+		// Add rise and fall events for each tooth
+		// Using small offset to avoid exact collisions
+		s->addEvent720(toothCenter, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
+		s->addEvent720(toothCenter + toothWidth, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
+	}
+	
+	// Secondary channel: cam-gated crank-home window
+	// Default cam window center computed from crankPinBTDC fallback (62°)
+	// Valid crank-home is at 134° BTDC #5
+	// Window should contain the valid crank-home pulse
+	float crankHomeBTDC = 134.0f;  // Valid crank-home position (134° BTDC #5)
+	float camWindowCenter = 720.0f - crankHomeBTDC;  // Convert BTDC to 720° position
+	float camWindowWidth = 35.0f;  // Conservative default width (30-40° range)
+	
+	// Add cam window (rise and fall) on secondary channel
+	float camWindowStart = camWindowCenter - camWindowWidth / 2.0f;
+	float camWindowEnd = camWindowCenter + camWindowWidth / 2.0f;
+	
+	// Ensure window is within 720° cycle
+	if (camWindowStart < 0) camWindowStart = 0;
+	if (camWindowEnd > 720) camWindowEnd = 720;
+	
+	s->addEvent720(camWindowStart, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent720(camWindowEnd, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	
+	// Set synchronization gap for primary channel
+	s->setTriggerSynchronizationGap(2.0f);
+}
