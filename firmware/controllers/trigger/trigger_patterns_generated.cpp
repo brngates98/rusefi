@@ -163,6 +163,59 @@ const TriggerPatternData pattern_TT_DODGE_NEON_1995 = {
     .knownOperationMode = true,
 };
 
+// Pattern: Dodge Stratus
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/dodge_stratus.yaml
+static const GapSpec gaps_TT_DODGE_STRATUS[] = {
+    { 0, 1.6f, 3.5f },
+};
+
+const TriggerPatternData pattern_TT_DODGE_STRATUS = {
+    .name = "Dodge Stratus",
+    .id = trigger_type_e::TT_DODGE_STRATUS,
+    .operationMode = operation_mode_e::FOUR_STROKE_CRANK_SENSOR,
+    .syncEdge = SyncEdge::RiseOnly,
+    .patternType = PatternType::SKIPPED_TOOTH,
+    .totalTeeth = 36,
+    .missingTeeth = 2,
+    .events = nullptr,
+    .eventCount = 0,
+    .gaps = gaps_TT_DODGE_STRATUS,
+    .gapCount = 1,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 90.0f,
+    .isCrankBased = true,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: Chrysler NGC 36-2-2
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/chrysler_ngc_36_2_2.yaml
+static const GapSpec gaps_TT_CHRYSLER_NGC_36_2_2[] = {
+    { 0, 1.6f, 3.5f },
+    { 1, 0.7f, 1.3f },
+};
+
+const TriggerPatternData pattern_TT_CHRYSLER_NGC_36_2_2 = {
+    .name = "Chrysler NGC 36-2-2",
+    .id = trigger_type_e::TT_CHRYSLER_NGC_36_2_2,
+    .operationMode = operation_mode_e::FOUR_STROKE_CRANK_SENSOR,
+    .syncEdge = SyncEdge::RiseOnly,
+    .patternType = PatternType::CUSTOM,
+    .totalTeeth = 0,
+    .missingTeeth = 0,
+    .events = nullptr,
+    .eventCount = 0,
+    .gaps = gaps_TT_CHRYSLER_NGC_36_2_2,
+    .gapCount = 2,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = true,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
 // Pattern: Ford Aspire
 // From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/ford_aspire.yaml
 static const ToothSpec events_TT_FORD_ASPIRE[] = {
@@ -182,6 +235,47 @@ const TriggerPatternData pattern_TT_FORD_ASPIRE = {
     .missingTeeth = 0,
     .events = events_TT_FORD_ASPIRE,
     .eventCount = 4,
+    .gaps = nullptr,
+    .gapCount = 0,
+    .useOnlyPrimaryForSync = true,
+    .tdcPosition = 0.0f,
+    .isCrankBased = true,
+    .hasSecondChannel = false,
+    .hasThirdChannel = false,
+    .knownOperationMode = true,
+};
+
+// Pattern: Ford TFI PIP
+// From: /home/runner/work/rusefi/rusefi/firmware/controllers/trigger/patterns/oem/ford_tfi_pip.yaml
+static const ToothSpec events_TT_FORD_TFI_PIP[] = {
+    { 0.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 20.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 90.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 110.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 180.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 200.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 270.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 290.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 360.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 380.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 450.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 470.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 540.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 560.0f, EdgeType::FALL, TriggerChannel::CRANK },
+    { 630.0f, EdgeType::RISE, TriggerChannel::CRANK },
+    { 650.0f, EdgeType::FALL, TriggerChannel::CRANK },
+};
+
+const TriggerPatternData pattern_TT_FORD_TFI_PIP = {
+    .name = "Ford TFI PIP",
+    .id = trigger_type_e::TT_FORD_TFI_PIP,
+    .operationMode = operation_mode_e::FOUR_STROKE_CRANK_SENSOR,
+    .syncEdge = SyncEdge::Rise,
+    .patternType = PatternType::CUSTOM,
+    .totalTeeth = 0,
+    .missingTeeth = 0,
+    .events = events_TT_FORD_TFI_PIP,
+    .eventCount = 16,
     .gaps = nullptr,
     .gapCount = 0,
     .useOnlyPrimaryForSync = true,
@@ -572,8 +666,14 @@ const TriggerPatternData* getTriggerPattern(trigger_type_e type) {
             return &pattern_TT_135_HOME_CAM;
         case trigger_type_e::TT_DODGE_NEON_1995:
             return &pattern_TT_DODGE_NEON_1995;
+        case trigger_type_e::TT_DODGE_STRATUS:
+            return &pattern_TT_DODGE_STRATUS;
+        case trigger_type_e::TT_CHRYSLER_NGC_36_2_2:
+            return &pattern_TT_CHRYSLER_NGC_36_2_2;
         case trigger_type_e::TT_FORD_ASPIRE:
             return &pattern_TT_FORD_ASPIRE;
+        case trigger_type_e::TT_FORD_TFI_PIP:
+            return &pattern_TT_FORD_TFI_PIP;
         case trigger_type_e::TT_GM_7X:
             return &pattern_TT_GM_7X;
         case trigger_type_e::TT_HONDA_K_CRANK_12_1:

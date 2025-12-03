@@ -1,0 +1,40 @@
+name: "Ford TFI PIP"
+id: TT_FORD_TFI_PIP
+operation_mode: FOUR_STROKE_CRANK_SENSOR
+sync_edge: Rise
+
+channels:
+  primary:
+    type: custom
+    events:
+      # 8 pulses per cycle for 8-cylinder
+      - { angle: 0.0, edge: rise }
+      - { angle: 20.0, edge: fall }
+      - { angle: 90.0, edge: rise }
+      - { angle: 110.0, edge: fall }
+      - { angle: 180.0, edge: rise }
+      - { angle: 200.0, edge: fall }
+      - { angle: 270.0, edge: rise }
+      - { angle: 290.0, edge: fall }
+      - { angle: 360.0, edge: rise }
+      - { angle: 380.0, edge: fall }
+      - { angle: 450.0, edge: rise }
+      - { angle: 470.0, edge: fall }
+      - { angle: 540.0, edge: rise }
+      - { angle: 560.0, edge: fall }
+      - { angle: 630.0, edge: rise }
+      - { angle: 650.0, edge: fall }
+
+sync:
+  use_only_primary: true
+
+metadata:
+  tdc_position: 0.0
+  is_crank_based: true
+  has_second_channel: false
+  known_operation_mode: true
+
+notes: |
+  Ford TFI (Thick Film Ignition) PIP (Profile Ignition Pickup)
+  8 pulses per 720 degrees for V8 engines
+  Used in many Ford vehicles from 1980s-1990s
