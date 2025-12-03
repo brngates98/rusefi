@@ -225,10 +225,23 @@ void configureArcticCat(TriggerWaveform *s) {
 
 // TT_AUDI_DIVBYN
 void initializeAudiDivbyN(TriggerWaveform *s) {
-	// Default configuration values
+	// Configuration values with fallback defaults
 	int actualTeeth = 135;  // Default: 135-tooth Audi wheel
 	int divider = 3;        // Default: divide by 3
 	float tdcAfterTrigger = 58; // Default TDC position after trigger (degrees)
+	
+#if !EFI_UNIT_TEST
+	// Use configuration values if available
+	if (engineConfiguration->audiActualTeeth > 0) {
+		actualTeeth = engineConfiguration->audiActualTeeth;
+	}
+	if (engineConfiguration->audiTriggerDivider > 0) {
+		divider = engineConfiguration->audiTriggerDivider;
+	}
+	if (engineConfiguration->audiTdcAfterTrigger > 0) {
+		tdcAfterTrigger = engineConfiguration->audiTdcAfterTrigger;
+	}
+#endif
 	
 	// Calculate virtual teeth: (actualTeeth * 2) / divider
 	int virtualTeeth = (actualTeeth * 2) / divider;
