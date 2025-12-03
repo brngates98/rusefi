@@ -498,7 +498,15 @@ expected<TriggerDecodeResult> TriggerDecoderBase::decodeTriggerEvent(
 		bool isSynchronizationPoint;
 		bool wasSynchronized = getShaftSynchronized();
 
-		if (triggerShape.isSynchronizationNeeded) {
+		// Handle home sensor sync mode (for multi-tooth wheels without missing teeth)
+		if (triggerShape.useHomeForSync) {
+			// Sync point is secondary channel (home sensor) rising edge
+			if (triggerWheel == TriggerWheel::T_SECONDARY && type == TriggerValue::RISE) {
+				isSynchronizationPoint = true;
+			} else {
+				isSynchronizationPoint = false;
+			}
+		} else if (triggerShape.isSynchronizationNeeded) {
 			triggerSyncGapRatio = (float)toothDurations[0] / toothDurations[1];
 
 			if (wasSynchronized && triggerSyncGapRatio > NOISE_RATIO_THRESHOLD) {

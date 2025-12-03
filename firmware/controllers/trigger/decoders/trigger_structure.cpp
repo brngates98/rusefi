@@ -84,6 +84,8 @@ void TriggerWaveform::initialize(operation_mode_e p_operationMode, SyncEdge p_sy
 	tdcPosition = 0;
 	shapeDefinitionError = false;
 	useOnlyPrimaryForSync = false;
+	useHomeForSync = false;
+	toothDivider = 1;
 
 	triggerShapeSynchPointIndex = 0;
 	setArrayValues(expectedEventCount, 0);

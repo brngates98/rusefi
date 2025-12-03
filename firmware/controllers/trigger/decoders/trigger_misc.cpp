@@ -25,30 +25,38 @@ void configureFiatIAQ_P8(TriggerWaveform * s) {
 	s->setTriggerSynchronizationGap(3);
 }
 
-// TT_TRI_TACH
+// TT_TRI_TACH - Multi-tooth wheel with home sensor sync
+// 135 physical teeth divided by 3 = 45 virtual teeth per 360° (90 per 720°)
+// Requires secondary channel (crank home) for 360° sync
+// Requires cam sensor for 720° phase sync (enforced by FOUR_STROKE_CRANK_SENSOR mode)
 void configureTriTach(TriggerWaveform * s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
-
-	s->isSynchronizationNeeded = false;
-
+	
+	// Use home sensor for sync instead of gap detection
+	s->useHomeForSync = true;
+	s->isSynchronizationNeeded = false;  // No gap-based sync
+	s->shapeWithoutTdc = true;  // Multi-tooth wheel without missing teeth
+	
+	// Divide 135 physical teeth by 3 = 45 virtual teeth per 360°
+	s->toothDivider = 3;
+	
+	// Require secondary input (crank home sensor)
+	s->needSecondTriggerInput = true;
+	
+	// Define virtual 45-tooth pattern per 360° (avoids memory issues from 135 teeth)
+	int virtualTeethCount = 45;
 	float toothWidth = 0.5;
-
-	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
-
-	int totalTeethCount = 135;
-	float offset = 0;
-
-	float angleDown = engineCycle / totalTeethCount * (0 + (1 - toothWidth));
-	float angleUp = engineCycle / totalTeethCount * (0 + 1);
-	s->addEventClamped(offset + angleDown, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleDown + 0.1, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp + 0.1, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-
-
-	addSkippedToothTriggerEvents(TriggerWheel::T_SECONDARY, s, totalTeethCount, /* skipped */ 0, toothWidth, offset, engineCycle,
-			1.0 * FOUR_STROKE_ENGINE_CYCLE / 135,
-			NO_RIGHT_FILTER);
+	
+	// Add virtual tooth events for primary channel (per 360° crank rotation)
+	addSkippedToothTriggerEvents(TriggerWheel::T_PRIMARY, s, virtualTeethCount, 
+	                              /* skipped */ 0, toothWidth, /* offset */ 0, 
+	                              TWO_STROKE_CYCLE_DURATION,  // 360°
+	                              NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	
+	// Secondary channel: single home pulse per crank revolution for sync
+	// Place at end of cycle at 359° for proper angle ordering
+	s->addEvent360(359, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+	s->addEvent360(360, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 }
 
 /**

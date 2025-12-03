@@ -123,6 +123,17 @@ public:
 	// If true, falling edges should be fully ignored on this trigger shape.
 	bool useOnlyRisingEdges;
 
+	/**
+	 * If true, sync on secondary channel (home sensor) edge instead of gap detection
+	 */
+	bool useHomeForSync = false;
+
+	/**
+	 * Divider for physical tooth count (e.g., 3 means count 3 physical teeth as 1 virtual tooth)
+	 * 135 physical teeth ÷ 3 = 45 virtual teeth per 360°
+	 */
+	int toothDivider = 1;
+
 	void calculateExpectedEventCounts();
 
 	size_t getExpectedEventCount(TriggerWheel channelIndex) const;
