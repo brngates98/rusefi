@@ -253,9 +253,8 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 	float toothWidth = 1.0f; // Narrow pulse width in degrees
 	
 	for (int i = 0; i < virtualTeeth; i++) {
-		float toothCenter = toothAngleWidth * i;
+		float toothCenter = toothAngleWidth * i + 0.5f; // Small offset to avoid angle 0
 		// Add rise and fall events for each tooth
-		// Using small offset to avoid exact collisions
 		s->addEvent720(toothCenter, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
 		s->addEvent720(toothCenter + toothWidth, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
 	}
@@ -272,9 +271,9 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 	float camWindowStart = camWindowCenter - camWindowWidth / 2.0f;
 	float camWindowEnd = camWindowCenter + camWindowWidth / 2.0f;
 	
-	// Ensure window is within 720° cycle
-	if (camWindowStart < 0) camWindowStart = 0;
-	if (camWindowEnd > 720) camWindowEnd = 720;
+	// Ensure window is within 720° cycle and doesn't start at 0
+	if (camWindowStart < 0.1f) camWindowStart = 0.1f;
+	if (camWindowEnd > 719.9f) camWindowEnd = 719.9f;
 	
 	s->addEvent720(camWindowStart, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
 	s->addEvent720(camWindowEnd, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
