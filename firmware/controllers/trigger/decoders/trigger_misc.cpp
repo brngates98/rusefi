@@ -251,10 +251,14 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 	int virtualTeeth = (actualTeeth * 2) / divider;
 
 	// Validate parameters
-	if (divider <= 0 || actualTeeth < 2 || virtualTeeth < 2) {
+	if (actualTeeth < 2 || virtualTeeth < 2) {
 		s->setShapeDefinitionError(true);
 		return;
 	}
+
+	// Constants for trigger waveform generation
+	constexpr float toothDutyCycle = 0.5f; // 50% duty cycle for primary teeth
+	constexpr float crankHomePulseWidth = 2.0f; // 2 degree pulse width for crank-home
 
 	// Set trigger configuration flags
 	s->isSynchronizationNeeded = true;
@@ -266,12 +270,11 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 	// Calculate tooth spacing for virtual teeth evenly distributed over 720 degrees
 	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
 	float toothAngle = engineCycle / virtualTeeth;
-	float toothWidth = 0.5; // 50% duty cycle
 
 	// Add primary channel virtual teeth events
 	for (int i = 0; i < virtualTeeth; i++) {
 		float riseAngle = i * toothAngle;
-		float fallAngle = riseAngle + (toothAngle * toothWidth);
+		float fallAngle = riseAngle + (toothAngle * toothDutyCycle);
 		
 		s->addEventClamped(riseAngle, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
 		s->addEventClamped(fallAngle, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
@@ -280,7 +283,6 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 	// Add secondary channel crank-home pulses
 	// Two pulses per 720 degrees (one per revolution)
 	// First pulse at (720 - crankPinBTDC) normalized, second at +360 degrees
-	float pulseWidth = 2.0; // 2 degree pulse width
 	
 	// First crank-home pulse
 	float firstPulseAngle = engineCycle - crankPinBTDC;
@@ -288,7 +290,7 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 		firstPulseAngle += engineCycle;
 	}
 	s->addEvent720(firstPulseAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
-	s->addEvent720(firstPulseAngle + pulseWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	s->addEvent720(firstPulseAngle + crankHomePulseWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 
 	// Second crank-home pulse (360 degrees later)
 	float secondPulseAngle = firstPulseAngle + 360.0;
@@ -296,5 +298,5 @@ void initializeAudiDivbyN(TriggerWaveform *s) {
 		secondPulseAngle -= engineCycle;
 	}
 	s->addEvent720(secondPulseAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
-	s->addEvent720(secondPulseAngle + pulseWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	s->addEvent720(secondPulseAngle + crankHomePulseWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
 }
