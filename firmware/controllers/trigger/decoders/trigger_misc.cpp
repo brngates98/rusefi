@@ -25,30 +25,51 @@ void configureFiatIAQ_P8(TriggerWaveform * s) {
 	s->setTriggerSynchronizationGap(3);
 }
 
-// TT_TRI_TACH
+// TT_TRI_TACH - Audi 5-cylinder 135+1 trigger
+// 135 evenly-spaced crank teeth on T_PRIMARY (timing resolution)
+// 1 sync tooth on T_SECONDARY at 62° BTDC (crank position sync)
+// Cam/VVT input used separately for 720° phase sync (VVT_SINGLE_TOOTH)
 void configureTriTach(TriggerWaveform * s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
-	s->isSynchronizationNeeded = false;
+	// Use only rising edges - this halves our event count from 270 to 135
+	// Critical for staying under PWM_PHASE_MAX_COUNT (280)
+	s->useOnlyRisingEdges = true;
 
-	float toothWidth = 0.5;
+	// Synchronization is needed, comes from the secondary channel
+	s->isSynchronizationNeeded = true;
 
-	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	// We need the secondary trigger input for the sync tooth
+	s->needSecondTriggerInput = true;
 
-	int totalTeethCount = 135;
-	float offset = 0;
+	// Use second channel for sync - the single tooth on T_SECONDARY is the sync marker
+	s->useOnlyPrimaryForSync = false;
 
-	float angleDown = engineCycle / totalTeethCount * (0 + (1 - toothWidth));
-	float angleUp = engineCycle / totalTeethCount * (0 + 1);
-	s->addEventClamped(offset + angleDown, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleDown + 0.1, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp + 0.1, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
+	// 135 teeth per 360° crank rotation = 2.667° per tooth
+	float toothAngle = 360.0f / 135.0f;
 
+	// Single sync tooth on T_SECONDARY at 62° BTDC
+	// 62° BTDC = 360° - 62° = 298° ATDC
+	// Position between tooth 111 (296°) and tooth 112 (298.67°)
+	float syncToothAngle = 296.5f;
+	float syncToothWidth = 1.5f;  // Narrow tooth to fit between primary teeth
 
-	addSkippedToothTriggerEvents(TriggerWheel::T_SECONDARY, s, totalTeethCount, /* skipped */ 0, toothWidth, offset, engineCycle,
-			1.0 * FOUR_STROKE_ENGINE_CYCLE / 135,
-			NO_RIGHT_FILTER);
+	// Define all events in chronological order
+	// Insert the secondary sync tooth between teeth 111 and 112
+	for (int i = 0; i < 135; i++) {
+		float angle = toothAngle * (i + 1);
+
+		// Insert secondary sync tooth events after tooth 111, before tooth 112
+		if (i == 111) {  // After the 111th tooth (~296°), before the 112th tooth (~298.67°)
+			s->addEvent360(syncToothAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+			s->addEvent360(syncToothAngle + syncToothWidth, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+		}
+
+		s->addEvent360(angle, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
+	}
+
+	// TDC position - the sync tooth is at 62° BTDC
+	s->tdcPosition = 62.0f;
 }
 
 /**
