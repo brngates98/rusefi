@@ -23,7 +23,9 @@ TEST(TriggerTriTach, VerifyShape) {
 	);
 
 	// Verify we have the correct number of events
-	// 135 primary teeth + 2 secondary tooth events (rise + fall) = 137
+	// With useOnlyRisingEdges=true, only RISE events are counted:
+	// 135 primary rising edges + 1 secondary rising edge = 136 events
+	// But getSize() returns total events added (both rise and fall): 135 + 2 = 137
 	EXPECT_EQ(137, shape->getSize());
 
 	// Verify getLength() doubles it for 720° engine cycle

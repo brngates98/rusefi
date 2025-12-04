@@ -49,8 +49,9 @@ void configureTriTach(TriggerWaveform * s) {
 	float toothAngle = 360.0f / 135.0f;
 
 	// Single sync tooth on T_SECONDARY at 62° BTDC
-	// 62° BTDC = 360° - 62° = 298° ATDC
-	// Position between tooth 111 (296°) and tooth 112 (298.67°)
+	// Positioning: We want the sync tooth near 62° BTDC (298° ATDC)
+	// but it must fit between primary teeth to avoid overlap
+	// Tooth 111 at 296.0°, Tooth 112 at 298.67° → place sync at 296.5°
 	float syncToothAngle = 296.5f;
 	float syncToothWidth = 1.5f;  // Narrow tooth to fit between primary teeth
 
