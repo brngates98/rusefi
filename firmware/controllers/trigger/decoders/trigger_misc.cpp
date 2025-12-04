@@ -36,7 +36,7 @@ void configureTriTach(TriggerWaveform * s) {
 	// Critical for staying under PWM_PHASE_MAX_COUNT (280)
 	s->useOnlyRisingEdges = true;
 
-	// Synchronization is needed, comes from the secondary channel
+	// Synchronization is needed, comes from secondary channel
 	s->isSynchronizationNeeded = true;
 
 	// We need the secondary trigger input for the sync tooth
@@ -67,6 +67,11 @@ void configureTriTach(TriggerWaveform * s) {
 
 		s->addEvent360(angle, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
 	}
+
+	// Set synchronization gap for the secondary channel
+	// The secondary channel has only one tooth per revolution, so the "gap" is 360° / 2.667° ≈ 135
+	// This tells the decoder to look for the secondary tooth as the sync point
+	s->setSecondTriggerSynchronizationGap(100);  // Large value since there's only one secondary tooth
 
 	// TDC position - the sync tooth is at 62° BTDC
 	s->tdcPosition = 62.0f;
