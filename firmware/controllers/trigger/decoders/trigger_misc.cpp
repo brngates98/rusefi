@@ -28,35 +28,44 @@ void configureFiatIAQ_P8(TriggerWaveform * s) {
 /**
  * TT_TRI_TACH - Audi 5-cylinder / BMW S14 style trigger
  * PRIMARY: Single tooth reference (1 per 360°) - sync source
- * SECONDARY: 135 teeth (no missing) - high resolution
+ * SECONDARY: 135 teeth (no missing) - high resolution (~2.67° per tooth)
  * CAM: Use VVT_SINGLE_TOOTH for 720° phase sync
+ * 
+ * Total events: 2 (PRIMARY) + 270 (SECONDARY) = 272 < PWM_PHASE_MAX_COUNT (280)
+ * Events must be added in strictly ascending angle order across both channels.
  */
 void configureTriTach(TriggerWaveform * s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
-	// Single tooth = self-synchronizing
 	s->isSynchronizationNeeded = false;
 	s->useOnlyPrimaryForSync = true;
-
-	// PRIMARY: Single reference tooth
-	constexpr float REF_TOOTH_WIDTH = 10.0f;
-	s->addEvent360(360.0f - REF_TOOTH_WIDTH, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
-	s->addEvent360(360.0f, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
-
-	// Calibrate with timing light
+	s->needSecondTriggerInput = true;
 	s->tdcPosition = 144.0f;
 
-	// SECONDARY: 135 teeth for resolution (~2.67° per tooth)
-	s->needSecondTriggerInput = true;
-	constexpr int TEETH_PER_REVOLUTION = 135;
-	constexpr float DEGREES_PER_TOOTH = 360.0f / TEETH_PER_REVOLUTION;
-	float toothWidth = DEGREES_PER_TOOTH * 0.5f;
+	constexpr int TEETH_COUNT = 135;
+	constexpr float DEG_PER_TOOTH = 360.0f / TEETH_COUNT;  // 2.6667°
+	constexpr float TOOTH_WIDTH = DEG_PER_TOOTH * 0.5f;    // 1.3333°
 
-	for (int i = 0; i < TEETH_PER_REVOLUTION; i++) {
-		float toothEnd = DEGREES_PER_TOOTH * (i + 1);
-		float toothStart = toothEnd - toothWidth;
-		s->addEvent360(toothStart, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
-		s->addEvent360(toothEnd, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	// PRIMARY tooth fits in gap between SECONDARY teeth 129 and 130
+	// Tooth 129 ends at: 130 * 2.6667 = 346.67°
+	// Tooth 130 starts at: 130 * 2.6667 + 1.3333 = 348.0°
+	// Gap: 346.67° to 348.0° - put PRIMARY at 347.0° to 347.5°
+	constexpr float PRIMARY_RISE = 347.0f;
+	constexpr float PRIMARY_FALL = 347.5f;
+	constexpr int PRIMARY_AFTER_TOOTH = 129;  // Insert after this SECONDARY tooth
+
+	for (int i = 0; i < TEETH_COUNT; i++) {
+		float riseAngle = DEG_PER_TOOTH * i + TOOTH_WIDTH;
+		float fallAngle = DEG_PER_TOOTH * (i + 1);
+
+		s->addEvent360(riseAngle, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+		s->addEvent360(fallAngle, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+
+		// Insert PRIMARY tooth after SECONDARY tooth 129 (in the gap before tooth 130)
+		if (i == PRIMARY_AFTER_TOOTH) {
+			s->addEvent360(PRIMARY_RISE, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
+			s->addEvent360(PRIMARY_FALL, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
+		}
 	}
 }
 
