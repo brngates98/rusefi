@@ -25,30 +25,39 @@ void configureFiatIAQ_P8(TriggerWaveform * s) {
 	s->setTriggerSynchronizationGap(3);
 }
 
-// TT_TRI_TACH
+/**
+ * TT_TRI_TACH - Audi 5-cylinder / BMW S14 style trigger
+ * PRIMARY: Single tooth reference (1 per 360°) - sync source
+ * SECONDARY: 135 teeth (no missing) - high resolution
+ * CAM: Use VVT_SINGLE_TOOTH for 720° phase sync
+ */
 void configureTriTach(TriggerWaveform * s) {
 	s->initialize(FOUR_STROKE_CRANK_SENSOR, SyncEdge::RiseOnly);
 
+	// Single tooth = self-synchronizing
 	s->isSynchronizationNeeded = false;
+	s->useOnlyPrimaryForSync = true;
 
-	float toothWidth = 0.5;
+	// PRIMARY: Single reference tooth
+	constexpr float REF_TOOTH_WIDTH = 10.0f;
+	s->addEvent360(360.0f - REF_TOOTH_WIDTH, TriggerValue::RISE, TriggerWheel::T_PRIMARY);
+	s->addEvent360(360.0f, TriggerValue::FALL, TriggerWheel::T_PRIMARY);
 
-	float engineCycle = FOUR_STROKE_ENGINE_CYCLE;
+	// Calibrate with timing light
+	s->tdcPosition = 144.0f;
 
-	int totalTeethCount = 135;
-	float offset = 0;
+	// SECONDARY: 135 teeth for resolution (~2.67° per tooth)
+	s->needSecondTriggerInput = true;
+	constexpr int TEETH_PER_REVOLUTION = 135;
+	constexpr float DEGREES_PER_TOOTH = 360.0f / TEETH_PER_REVOLUTION;
+	float toothWidth = DEGREES_PER_TOOTH * 0.5f;
 
-	float angleDown = engineCycle / totalTeethCount * (0 + (1 - toothWidth));
-	float angleUp = engineCycle / totalTeethCount * (0 + 1);
-	s->addEventClamped(offset + angleDown, TriggerValue::RISE, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleDown + 0.1, TriggerValue::RISE, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp, TriggerValue::FALL, TriggerWheel::T_PRIMARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-	s->addEventClamped(offset + angleUp + 0.1, TriggerValue::FALL, TriggerWheel::T_SECONDARY, NO_LEFT_FILTER, NO_RIGHT_FILTER);
-
-
-	addSkippedToothTriggerEvents(TriggerWheel::T_SECONDARY, s, totalTeethCount, /* skipped */ 0, toothWidth, offset, engineCycle,
-			1.0 * FOUR_STROKE_ENGINE_CYCLE / 135,
-			NO_RIGHT_FILTER);
+	for (int i = 0; i < TEETH_PER_REVOLUTION; i++) {
+		float toothEnd = DEGREES_PER_TOOTH * (i + 1);
+		float toothStart = toothEnd - toothWidth;
+		s->addEvent360(toothStart, TriggerValue::RISE, TriggerWheel::T_SECONDARY);
+		s->addEvent360(toothEnd, TriggerValue::FALL, TriggerWheel::T_SECONDARY);
+	}
 }
 
 /**
