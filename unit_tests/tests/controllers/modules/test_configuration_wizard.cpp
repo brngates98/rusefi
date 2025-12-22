@@ -11,50 +11,38 @@
 class ConfigurationWizardTest : public TestBase<> {
 };
 
-TEST_F(ConfigurationWizardTest, VinFilledWasEmpty_ShouldBecomeNotEmpty) {
-    // given: VIN string is non-empty, but flag currently says empty
-    strcpy(engineConfiguration->vinNumber, "1M8GDM9AXKP042788");
-    engineConfiguration->vinIsEmpty = true;
-
-    // when
-    ConfigurationWizard::onConfigOnStartUpOrBurn(false);
-
-    // then: since VIN is filled, flag should flip to false
-    ASSERT_FALSE(engineConfiguration->vinIsEmpty);
-}
-
-TEST_F(ConfigurationWizardTest, VinFilledWasNotEmpty_ShouldStayNotEmpty) {
-    // given: VIN string is non-empty, and flag already says not empty
-    strcpy(engineConfiguration->vinNumber, "1M8GDM9AXKP042788");
-    engineConfiguration->vinIsEmpty = false;
-
-    // when
-    ConfigurationWizard::onConfigOnStartUpOrBurn(false);
-
-    // then: no change expected
-    ASSERT_FALSE(engineConfiguration->vinIsEmpty);
-}
-
-TEST_F(ConfigurationWizardTest, VinEmptyWasEmpty_ShouldStayEmpty) {
-    // given: VIN string is empty, and flag already says empty
+TEST_F(ConfigurationWizardTest, VinEmptyMismatch_ShouldOpenVehicleInfoPanel) {
+    // given: VIN string is empty,and we aren't running another wizard
     strcpy(engineConfiguration->vinNumber, "");
-    engineConfiguration->vinIsEmpty = true;
+    engineConfiguration->wizardPanelToShow = -1;
 
     // when
     ConfigurationWizard::onConfigOnStartUpOrBurn(false);
 
-    // then: no change expected
-    ASSERT_TRUE(engineConfiguration->vinIsEmpty);
+    // then: VIN becomes empty and wizard panel set to Vehicle Information
+    ASSERT_EQ(djb2lowerCase(DIALOG_NAME_VEHICLE_INFORMATION), engineConfiguration->wizardPanelToShow);
 }
 
-TEST_F(ConfigurationWizardTest, VinEmptyWasNotEmpty_ShouldBecomeEmpty) {
-    // given: VIN string is empty, but flag currently says not empty
+TEST_F(ConfigurationWizardTest, IsRunningOnBurn_ShouldNotChangeStateOrPanel) {
+    // given: mismatch, but running on burn should suppress changes
     strcpy(engineConfiguration->vinNumber, "");
-    engineConfiguration->vinIsEmpty = false;
+    engineConfiguration->wizardPanelToShow = -1;
+
+    // when
+    ConfigurationWizard::onConfigOnStartUpOrBurn(true);
+
+    // then: no changes applied
+    ASSERT_EQ(-1, engineConfiguration->wizardPanelToShow);
+}
+
+TEST_F(ConfigurationWizardTest, NoStateChange_ShouldNotTouchPanel) {
+    // given: already empty VIN state
+    strcpy(engineConfiguration->vinNumber, "");
+    engineConfiguration->wizardPanelToShow = 99;
 
     // when
     ConfigurationWizard::onConfigOnStartUpOrBurn(false);
 
-    // then: since VIN is empty, flag should flip to true
-    ASSERT_TRUE(engineConfiguration->vinIsEmpty);
+    // then: panel remains unchanged
+    ASSERT_EQ(99, engineConfiguration->wizardPanelToShow);
 }

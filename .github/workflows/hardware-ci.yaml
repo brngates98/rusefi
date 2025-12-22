@@ -76,7 +76,7 @@ jobs:
 
       # TODO: address `Acquire GCC` version copy paste, maybe a tiny action to acquire specific version?
     - name: Acquire Arm GNU Toolchain (arm-none-eabi-gcc)
-      uses: carlosperate/arm-none-eabi-gcc-action@v1.11.1
+      uses: carlosperate/arm-none-eabi-gcc-action@v1.12.0
       with:
         release: '14.2.Rel1'
 
@@ -132,13 +132,13 @@ jobs:
         st-flash --format=binary --reset --connect-under-reset write firmware/deliver/rusefi.bin 0x08000000
 
     - name: Upload build bin artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: rusefi_hw-ci-${{matrix.build-target}}.bin
         path: ./firmware/build/rusefi*.bin
 
     - name: Upload .ini artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: rusefi_hw-ci-${{matrix.build-target}}.ini
         path: ${{matrix.test-suite-ini}}

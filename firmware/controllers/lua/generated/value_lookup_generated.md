@@ -337,6 +337,9 @@ Inhibit operation of this fan while the engine is not running.
 ### disableFan2WhenStopped
 Inhibit operation of this fan while the engine is not running.
 
+### wizardPanelToShow
+
+
 ### driveWheelRevPerKm
 Number of revolutions per kilometer for the wheels your vehicle speed sensor is connected to. Use an online calculator to determine this based on your tire size.
 
@@ -669,9 +672,6 @@ If enabled we use four Push-Pull outputs to directly drive stepper idle air valv
 
 ### verboseCan2
 Print incoming and outgoing second bus CAN messages in rusEFI console
-
-### vinIsEmpty
-
 
 ### boostPid.pFactor
 

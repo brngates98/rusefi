@@ -343,6 +343,9 @@ float getConfigValueByHash(const int hash) {
 // disableFan2WhenStopped
 		case -311454863:
 			return engineConfiguration->disableFan2WhenStopped;
+// wizardPanelToShow
+		case 727066858:
+			return engineConfiguration->wizardPanelToShow;
 // driveWheelRevPerKm
 		case 991724096:
 			return engineConfiguration->driveWheelRevPerKm;
@@ -676,9 +679,6 @@ float getConfigValueByHash(const int hash) {
 // verboseCan2
 		case -1056203297:
 			return engineConfiguration->verboseCan2;
-// vinIsEmpty
-		case 69606941:
-			return engineConfiguration->vinIsEmpty;
 // boostPid.pFactor
 		case 1421783686:
 			return engineConfiguration->boostPid.pFactor;
@@ -2616,6 +2616,11 @@ bool setConfigValueByName(const char *name, float value) {
 		engineConfiguration->disableFan2WhenStopped = (int)value;
 		return 1;
 	}
+		case 727066858:
+	{
+		engineConfiguration->wizardPanelToShow = (int)value;
+		return 1;
+	}
 		case 991724096:
 	{
 		engineConfiguration->driveWheelRevPerKm = value;
@@ -3169,11 +3174,6 @@ bool setConfigValueByName(const char *name, float value) {
 		case -1056203297:
 	{
 		engineConfiguration->verboseCan2 = (int)value;
-		return 1;
-	}
-		case 69606941:
-	{
-		engineConfiguration->vinIsEmpty = (int)value;
 		return 1;
 	}
 		case 1421783686:
