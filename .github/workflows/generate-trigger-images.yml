@@ -1,0 +1,91 @@
+name: Generate trigger wheel images
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "unit_tests/**"
+      - "firmware/**"
+      - ".github/workflows/generate-trigger-images.yml"
+
+jobs:
+  gen-images:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Build tools for unit_tests on Windows
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            unzip
+
+      - name: Build unit_tests
+        shell: msys2 {0}
+        run: |
+          cd unit_tests
+          make -j2
+
+      - name: Run unit_tests (generates triggers.txt)
+        shell: msys2 {0}
+        run: |
+          cd unit_tests
+          build/rusefi_test.exe
+
+      # gen_trigger_images.bat expects a console jar on disk.
+      # Easiest is to grab the public bundle and extract rusefi_console.jar.
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Download rusefi_console.jar from bundle
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          New-Item -ItemType Directory -Force -Path java_console_binary | Out-Null
+
+          Invoke-WebRequest -Uri "https://rusefi.com/build_server/rusefi_bundle.zip" -OutFile "rusefi_bundle.zip"
+          Expand-Archive -Force "rusefi_bundle.zip" "rusefi_bundle"
+
+          $jar = Get-ChildItem -Recurse -Path "rusefi_bundle" -Filter "rusefi_console.jar" | Select-Object -First 1
+          if (-not $jar) { throw "Could not find rusefi_console.jar inside rusefi_bundle.zip" }
+
+          Copy-Item -Force $jar.FullName "java_console_binary\rusefi_console.jar"
+
+      - name: Generate trigger images
+        shell: cmd
+        run: |
+          firmware\gen_trigger_images.bat
+
+      - name: Collect generated PNGs
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          New-Item -ItemType Directory -Force -Path trigger_images | Out-Null
+
+          $imgs = Get-ChildItem -Recurse -Filter "trigger_*.png" | Where-Object { $_.FullName -notmatch "\\rusefi_bundle\\" }
+          if (-not $imgs) { throw "No trigger_*.png files found after running gen_trigger_images.bat" }
+
+          foreach ($i in $imgs) {
+            Copy-Item -Force $i.FullName (Join-Path "trigger_images" $i.Name)
+          }
+
+          Write-Host "Collected $($imgs.Count) images."
+
+      - name: Upload trigger images artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trigger-images
+          path: trigger_images/*.png
